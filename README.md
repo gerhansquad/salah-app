@@ -1,5 +1,3 @@
-### this is salah app
+### Salah
 
-Hey guys its ya boy Ahsan back at it again with a git push!
-Testing
-Cringing
+Track your prayers with the Salah app!
