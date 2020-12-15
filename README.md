@@ -27,4 +27,4 @@ Run this to build and deploy the app on an Android device or emulator
 `lcordova emulate android`
 Run this to build the Android app, as well as install and deploy it on an Android emulator. If a device is connected it will be used, unless an eligible emulator is already running.
 
-test
+test 2
