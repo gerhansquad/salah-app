@@ -4,6 +4,8 @@ Track your prayers with Salah©!
 
 ### For contributors
 
+**Required**
+
 `npm i`
 Run this once at the beginning to install required dependancies
 
@@ -17,6 +19,8 @@ development. **Important: You need to have the Android SDK installed beforehand.
 `lcordova platform add ios`
 Run this once at the beginning to install the development tools for iOS
 development. **Important: You need to have the iOS SDK installed beforehand, which is currently only possible on macOS.**
+
+**Optional**
 
 `lcordova build android`
 Run this to build the Android app
