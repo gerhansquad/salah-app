@@ -10,7 +10,7 @@ Track your prayers with Salah©!
 Run this once at the beginning to install required dependancies
 
 `npm i cordova -g`
-If you don't already have cordova, run this command once at the beginning to install it
+If you don't already have Cordova, run this command once at the beginning to install it globally
 
 `cordova platform add android`
 Run this once at the beginning to install the development tools for Android
