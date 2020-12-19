@@ -1,0 +1,91 @@
+body {
+	margin: 0;
+	height: 100%;
+	overflow: hidden;
+	background-image: url("../img/bg.jpg");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	background-position: center;
+}
+
+.fill {
+	height: 100vh;
+}
+
+.myrow1 {
+	height: 20vh;
+}
+
+.myrow2 {
+	height: 40vh;
+}
+
+.myrow3 {
+	height: 40vh;
+	border-top: solid 2px;
+	border-color: white;
+}
+
+.innerRow {
+	justify-content: center;
+	align-items: center;
+	/* border: solid 0.1px maroon; */
+	height: 29%;
+}
+
+.mycol2,
+.mycol3,
+.mycol4 {
+	border-right: solid 1px;
+	border-left: solid 1px;
+	border-color: aliceblue;
+}
+
+.mycol {
+	border-left: solid 0px;
+	border-right: solid 1px;
+	border-color: aliceblue;
+	background-color: rgb(26, 31, 50, 1);
+}
+
+.mycol2 {
+	background-color: rgb(48, 49, 70, 1);
+}
+
+.mycol3 {
+	background-color: rgb(23, 25, 38, 1);
+}
+
+.mycol4 {
+	background-color: rgba(84, 71, 91, 1);
+}
+
+.mycol5 {
+	border-right: solid 0px;
+	border-left: solid 1px;
+	border-color: aliceblue;
+	background-color: rgb(117, 86, 101, 1);
+}
+
+.prayer-name {
+	font-family: "Source Sans Pro", sans-serif;
+	padding-top: 9%;
+	text-align: center;
+	color: aliceblue;
+	font-size: 80%;
+}
+
+/* .prayer-status {
+	background-image: url("../img/man-praying.png");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	background-position: center;
+} */
+
+.resize {
+	max-width: 80%;
+	height: 50%;
+	filter: invert(100%);
+}

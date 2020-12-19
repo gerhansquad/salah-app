@@ -18,9 +18,9 @@
     under the License.
 -->
 <html>
-    <head>
-        <meta charset="utf-8">
-        <!--
+	<head>
+		<meta charset="utf-8" />
+		<!--
         Customize this policy to fit your own app's needs. For more guidance, see:
             https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
         Some notes:
@@ -29,23 +29,144 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
-        <meta name="format-detection" content="telephone=no">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-        <meta name="color-scheme" content="light dark">
-        <link rel="stylesheet" href="css/index.css">
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-        </div>
-        <script src="cordova.js"></script>
-        <script src="js/index.js"></script>
-    </body>
+		<meta http-equiv="Content-Security-Policy" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="msapplication-tap-highlight" content="no" />
+		<meta
+			name="viewport"
+			content="initial-scale=1, width=device-width, viewport-fit=cover"
+		/>
+		<meta name="color-scheme" content="light dark" />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="css/homepage.css" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200&display=swap"
+			rel="stylesheet"
+		/>
+		<title>Salah</title>
+		<!-- <img src="./img/man-praying.png" alt="Man=Praying" /> -->
+	</head>
+	<body>
+		<div class="container-fluid fill">
+			<div class="row myrow1">
+				<div class="col-xs">
+					<h2>Row 1</h2>
+				</div>
+			</div>
+			<div class="row myrow2">
+				<div class="col-xs">
+					<h2>Row 2</h2>
+				</div>
+			</div>
+			<div class="row myrow3">
+				<div class="col mycol">
+					<div class="row">
+						<h2 class="prayer-name">FAJR</h2>
+					</div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+					<div class="row innerRow"></div>
+				</div>
+				<div class="col mycol2">
+					<div class="row">
+						<h2 class="prayer-name">DUHR</h2>
+					</div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+				</div>
+				<div class="col mycol3">
+					<div class="row">
+						<h2 class="prayer-name">ASR</h2>
+					</div>
+					<div class="row innerRow"></div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+					<div class="row innerRow"></div>
+				</div>
+				<div class="col mycol4">
+					<div class="row">
+						<h2 class="prayer-name">MAGHRIB</h2>
+					</div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+					<div class="row innerRow"></div>
+				</div>
+				<div class="col mycol5">
+					<div class="row">
+						<h2 class="prayer-name">ISHA</h2>
+					</div>
+					<div class="row innerRow"></div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+					<div class="row innerRow">
+						<img
+							class="resize"
+							src="img/man-praying.png"
+							alt="empty-man"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="cordova.js"></script>
+	</body>
 </html>
