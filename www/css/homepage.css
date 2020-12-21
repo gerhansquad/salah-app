@@ -54,7 +54,13 @@ body {
 	border-left: solid 1px;
 	border-color: aliceblue;
 }
-
+.mycol1,
+.mycol2,
+.mycol3,
+.mycol4,
+.mycol5 {
+	min-width: 5%;
+}
 .mycol1 {
 	border-left: solid 0px;
 	border-right: solid 1px;
@@ -83,11 +89,21 @@ body {
 
 .prayer-name {
 	font-family: "Source Sans Pro", sans-serif;
-	padding-top: 9%;
+	padding: 9%;
+	padding-inline: 0% 0%;
 	text-align: center;
 	color: aliceblue;
-	font-size: 100%;
+	font-size: 4vw;
 }
+/* .prayer-name-Mag {
+	font-family: "Source Sans Pro", sans-serif;
+	padding-top: 9%;
+	padding-inline: 0% 0%;
+	text-align: center;
+	margin-left: -8%;
+	color: aliceblue;
+	font-size: 100%;
+} */
 
 /* .prayer-status {
 	background-image: url("../img/man-praying.png");
@@ -101,5 +117,5 @@ body {
 	width: auto;
 	height: auto;
 	filter: invert(100%);
-	padding: 25%;
+	padding: 15%;
 }
