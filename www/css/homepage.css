@@ -1,6 +1,8 @@
 body {
-	margin: 0;
+	margin: 0%;
 	height: 100%;
+	width: 100%;
+	position: fixed;
 	overflow: hidden;
 	background-image: url("../img/bg.jpg");
 	background-repeat: no-repeat;
@@ -9,22 +11,33 @@ body {
 	background-position: center;
 }
 
+
 .fill {
-	height: 100vh;
+	height: 100%;
+	width: 100%;
+	position: fixed;
 }
 
+
 .myrow1 {
-	height: 20vh;
+	height: 20%;
+	position:fixed;
+	top: 0%;
 }
 
 .myrow2 {
-	height: 40vh;
+	height: 40%;
+	top: 20%;
+	position:fixed
 }
 
 .myrow3 {
-	height: 40vh;
+	height: 40%;
 	border-top: solid 2px;
 	border-color: white;
+	position: fixed;
+	top: 60%;
+	width: 100%;
 }
 
 .innerRow {
@@ -42,7 +55,7 @@ body {
 	border-color: aliceblue;
 }
 
-.mycol {
+.mycol1 {
 	border-left: solid 0px;
 	border-right: solid 1px;
 	border-color: aliceblue;
@@ -73,7 +86,7 @@ body {
 	padding-top: 9%;
 	text-align: center;
 	color: aliceblue;
-	font-size: 80%;
+	font-size: 100%;
 }
 
 /* .prayer-status {
@@ -85,7 +98,8 @@ body {
 } */
 
 .resize {
-	max-width: 80%;
-	height: 50%;
+	width: auto;
+	height: auto;
 	filter: invert(100%);
+	padding: 25%;
 }
