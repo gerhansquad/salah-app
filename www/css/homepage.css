@@ -4,6 +4,8 @@ body {
 	width: 100%;
 	position: fixed;
 	overflow: hidden;
+
+	/* Background CSS */
 	background-image: url("../img/bg.jpg");
 	background-repeat: no-repeat;
 	background-attachment: fixed;
@@ -11,23 +13,26 @@ body {
 	background-position: center;
 }
 
-/*  Main Container  */
+/*  Main Container Size and Alignment */
 .fill {
 	height: 100%;
 	width: 100%;
 	position: fixed;
 }
 
-/*  Outer Rows */
+/******************************************************************************************************/
+/*										Main Container Layout and Structure							  */
+/******************************************************************************************************/
+
 .myrow1 {
 	height: 20%;
-	position:fixed;
+	position: fixed;
 	top: 0%;
 }
 .myrow2 {
 	height: 40%;
 	top: 20%;
-	position:fixed
+	position: fixed;
 }
 .myrow3 {
 	height: 40%;
@@ -37,15 +42,20 @@ body {
 	top: 60%;
 	width: 100%;
 }
-/* Inner Rows */
+
+/******************************************************************************************************/
+/*										Slider Open state: Layout and Structure						  */
+/******************************************************************************************************/
+
 .innerRow {
 	justify-content: center;
 	align-items: center;
-	/* border: solid 0.1px maroon; */
 	height: 29%;
+
+	/* Uncomment next line when debugging the slider: */
+	/* border: solid 0.1px black; */
 }
 
-/* Row 3 Columns  */
 .mycol2,
 .mycol3,
 .mycol4 {
@@ -60,10 +70,15 @@ body {
 .mycol5 {
 	min-width: 5%;
 }
+
+.mycol1,
+.mycol5 {
+	border-color: white;
+}
+
 .mycol1 {
 	border-left: solid 0px;
 	border-right: solid 1px;
-	border-color: aliceblue;
 	background-color: rgb(26, 31, 50, 1);
 }
 
@@ -82,12 +97,16 @@ body {
 .mycol5 {
 	border-right: solid 0px;
 	border-left: solid 1px;
-	border-color: aliceblue;
 	background-color: rgb(117, 86, 101, 1);
 }
 
-/* Prayer Text */
+/******************************************************************************************************/
+/*										Slider Open state: Text and Icons							  */
+/******************************************************************************************************/
+
+/* Mandatory Prayer Text */
 .prayer-name {
+	margin-bottom: 0%;
 	font-family: "Source Sans Pro", sans-serif;
 	padding: 9%;
 	padding-inline: 0% 0%;
@@ -96,17 +115,11 @@ body {
 	font-size: 4vw;
 }
 
-/*  Prayer Images Resizing */
-.resize {
+/*  Mandatory Icons */
+.mandatory-icon {
 	width: auto;
 	height: auto;
 	filter: invert(100%);
 	padding: 22%;
+	padding-top: 12%;
 }
-/* .prayer-status {
-	background-image: url("../img/man-praying.png");
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	background-size: cover;
-	background-position: center;
-} */
