@@ -11,26 +11,24 @@ body {
 	background-position: center;
 }
 
-
+/*  Main Container  */
 .fill {
 	height: 100%;
 	width: 100%;
 	position: fixed;
 }
 
-
+/*  Outer Rows */
 .myrow1 {
 	height: 20%;
 	position:fixed;
 	top: 0%;
 }
-
 .myrow2 {
 	height: 40%;
 	top: 20%;
 	position:fixed
 }
-
 .myrow3 {
 	height: 40%;
 	border-top: solid 2px;
@@ -39,7 +37,7 @@ body {
 	top: 60%;
 	width: 100%;
 }
-
+/* Inner Rows */
 .innerRow {
 	justify-content: center;
 	align-items: center;
@@ -47,6 +45,7 @@ body {
 	height: 29%;
 }
 
+/* Row 3 Columns  */
 .mycol2,
 .mycol3,
 .mycol4 {
@@ -87,6 +86,7 @@ body {
 	background-color: rgb(117, 86, 101, 1);
 }
 
+/* Prayer Text */
 .prayer-name {
 	font-family: "Source Sans Pro", sans-serif;
 	padding: 9%;
@@ -95,16 +95,14 @@ body {
 	color: aliceblue;
 	font-size: 4vw;
 }
-/* .prayer-name-Mag {
-	font-family: "Source Sans Pro", sans-serif;
-	padding-top: 9%;
-	padding-inline: 0% 0%;
-	text-align: center;
-	margin-left: -8%;
-	color: aliceblue;
-	font-size: 100%;
-} */
 
+/*  Prayer Images Resizing */
+.resize {
+	width: auto;
+	height: auto;
+	filter: invert(100%);
+	padding: 22%;
+}
 /* .prayer-status {
 	background-image: url("../img/man-praying.png");
 	background-repeat: no-repeat;
@@ -112,10 +110,3 @@ body {
 	background-size: cover;
 	background-position: center;
 } */
-
-.resize {
-	width: auto;
-	height: auto;
-	filter: invert(100%);
-	padding: 15%;
-}
