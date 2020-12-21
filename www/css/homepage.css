@@ -71,9 +71,10 @@ body {
 .prayer-name {
 	font-family: "Source Sans Pro", sans-serif;
 	padding-top: 9%;
+	padding-inline: 0% 0%;
 	text-align: center;
 	color: aliceblue;
-	font-size: 80%;
+	font-size: 4.5vw;
 }
 
 /* .prayer-status {
