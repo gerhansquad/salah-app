@@ -19,11 +19,26 @@
 
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-document.addEventListener('deviceready', onDeviceReady, false);
+document.addEventListener("deviceready", onDeviceReady, false)
 
 function onDeviceReady() {
-    // Cordova is now initialized. Have fun!
+	// Cordova is now initialized. Have fun!
+	navigator.geolocation.getCurrentPosition(onSuccess, onError)
+	console.log("Running cordova-" + cordova.platformId + "@" + cordova.version)
+	document.getElementById("deviceready").classList.add("ready")
+}
 
-    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-    document.getElementById('deviceready').classList.add('ready');
+// onSuccess Callback
+// This method accepts a Position object, which contains the
+// current GPS coordinates
+//
+let onSuccess = function (position) {
+	alert("it worked!", position)
+	document.getElementById("location").innerText = "Latitude:", position.coords.latitude, ", Longitude:", position.coords.longitude
+}
+
+// onError Callback receives a PositionError object
+//
+function onError(error) {
+	alert("code: " + error.code + "\n" + "message: " + error.message + "\n")
 }
