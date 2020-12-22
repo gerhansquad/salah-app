@@ -1,11 +1,7 @@
 body {
-	margin: 0%;
+	margin: 0;
 	height: 100%;
-	width: 100%;
-	position: fixed;
 	overflow: hidden;
-
-	/* Background CSS */
 	background-image: url("../img/bg.jpg");
 	background-repeat: no-repeat;
 	background-attachment: fixed;
@@ -13,34 +9,22 @@ body {
 	background-position: center;
 }
 
-/*  Main Container Size and Alignment */
-.fill {
-	height: 100%;
-	width: 100%;
-	position: fixed;
-}
-
 /******************************************************************************************************/
 /*										Main Container Layout and Structure							  */
 /******************************************************************************************************/
 
+.fill {
+	height: 100vh;
+	overflow: hidden;
+}
+
 .myrow1 {
-	height: 20%;
-	position: fixed;
-	top: 0%;
+	height: 20vh;
 }
-.myrow2 {
-	height: 40%;
-	top: 20%;
-	position: fixed;
-}
+
+.myrow2, 
 .myrow3 {
-	height: 40%;
-	border-top: solid 2px;
-	border-color: white;
-	position: fixed;
-	top: 60%;
-	width: 100%;
+	height: 40vh;
 }
 
 /******************************************************************************************************/
@@ -63,22 +47,46 @@ body {
 	border-left: solid 1px;
 	border-color: aliceblue;
 }
+
 .mycol1,
 .mycol2,
 .mycol3,
 .mycol4,
 .mycol5 {
+	border-top: solid aliceblue 2px;
+	position: relative;
+	top: 88%;
 	min-width: 5%;
+}
+
+@keyframes slide-up {
+	0% {
+		top: 88%;
+	}
+	100% {
+		top: 0%;
+	}
+}
+
+.mycol1:hover,
+.mycol2:hover,
+.mycol3:hover,
+.mycol4:hover,
+.mycol5:hover {
+	animation: 0.5s slide-up;
+	border-top: solid aliceblue 0px;
+	top: 0%;
 }
 
 .mycol1,
 .mycol5 {
-	border-color: white;
+	border-color: aliceblue;
 }
 
 .mycol1 {
 	border-left: solid 0px;
 	border-right: solid 1px;
+	border-color: aliceblue;
 	background-color: rgb(26, 31, 50, 1);
 }
 
@@ -97,6 +105,7 @@ body {
 .mycol5 {
 	border-right: solid 0px;
 	border-left: solid 1px;
+	border-color: aliceblue;
 	background-color: rgb(117, 86, 101, 1);
 }
 
