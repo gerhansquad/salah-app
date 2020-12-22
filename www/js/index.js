@@ -24,8 +24,6 @@ document.addEventListener("deviceready", onDeviceReady, false)
 function onDeviceReady() {
 	// Cordova is now initialized. Have fun!
 	navigator.geolocation.getCurrentPosition(onSuccess, onError)
-	console.log("Running cordova-" + cordova.platformId + "@" + cordova.version)
-	document.getElementById("deviceready").classList.add("ready")
 }
 
 // onSuccess Callback
@@ -33,9 +31,32 @@ function onDeviceReady() {
 // current GPS coordinates
 //
 let onSuccess = function (position) {
-	alert("it worked!", position)
-	document.getElementById("location").innerText = "Latitude:", position.coords.latitude, ", Longitude:", position.coords.longitude
+
+	const otherAPIParams = {
+		user_ip: "5.30.161.11",
+		country: "AE",
+		zipcode: "00000"
+	}
+
+	const AdhanAPIParams = {
+		latitude:"51.508515",
+		longitude:"-0.1254872",
+		method:"2",
+		month:"4",
+		year:"2017"
+	}
+
+	cordova.plugin.http.get('https://api.aladhan.com/v1/calendar',
+	AdhanAPIParams,
+	{ Authorization: 'OAuth2: token' }, function(response) {
+		// stuff = JSON.parse(response.data);
+		// console.log(stuff.message);
+  		$("#row1").text(response.data)
+	}, function(response) {
+  		$("#row2").text(response.error)
+	});
 }
+
 
 // onError Callback receives a PositionError object
 //
