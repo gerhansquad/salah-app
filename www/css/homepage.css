@@ -15,16 +15,14 @@ body {
 
 .fill {
 	height: 100vh;
+	overflow: hidden;
 }
 
 .myrow1 {
 	height: 20vh;
 }
 
-.myrow2 {
-	height: 40vh;
-}
-
+.myrow2, 
 .myrow3 {
 	height: 40vh;
 }
@@ -49,6 +47,7 @@ body {
 	border-left: solid 1px;
 	border-color: aliceblue;
 }
+
 .mycol1,
 .mycol2,
 .mycol3,
