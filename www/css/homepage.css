@@ -69,7 +69,8 @@ body {
 	justify-content: center;
 }
 .row2row4 {
-	text-transform: uppercase;
+	align-items: flex-start;
+	/* text-transform: uppercase; */
 	height: 10.5%;
 }
 
