@@ -27,11 +27,85 @@ body {
 	height: 40vh;
 }
 
+.myrow2 {
+	justify-content: center;
+	padding-left: 10%;
+	padding-right: 10%;
+	/* border: solid 2px gold; */
+}
+
+/******************************************************************************************************/
+/*										Logo and Prayer Window: Layout and Structure						  */
+/******************************************************************************************************/
+
+.row2row1,
+.row2row2,
+.row2row3,
+.row2row4 {
+	font-family: "Source Sans Pro", sans-serif;
+	text-align: center;
+	align-items: center;
+	color: white;
+	/* border: solid white 1px; */
+}
+
+.row2row1 {
+	justify-content: center;
+	height: 44%;
+}
+.row2row2 {
+	text-transform: uppercase;
+	height: 12.5%;
+}
+.row2row3 {
+	height: 33%;
+	justify-content: center;
+}
+.row2row4 {
+	text-transform: uppercase;
+	height: 10.5%;
+}
+
+/******************************************************************************************************/
+/*										Logo and Prayer Window: Content					  */
+/******************************************************************************************************/
+.logo {
+	width: auto;
+	height: 100%;
+	filter: invert(100%);
+	/* border: gold solid 1px; */
+}
+
+#first-prayer,
+#time-left,
+#second-prayer {
+	margin: 0;
+}
+
+#first-prayer {
+	font-size: 3.5vh;
+	font-weight: bold;
+	/* border: red solid 1px; */
+}
+#time-left {
+	font-weight: bold;
+	font-family: helvetica;
+	font-size: 15vh;
+	line-height: 0.6;
+	/* border: black solid 1px; */
+}
+#second-prayer {
+	line-height: 0.6;
+	font-size: 3vh;
+	font-weight: bold;
+	/* border: red solid 1px; */
+}
+
 /******************************************************************************************************/
 /*										Slider Open state: Layout and Structure						  */
 /******************************************************************************************************/
 
-.innerRow {
+.innerRow3 {
 	justify-content: center;
 	align-items: center;
 	height: 29%;
@@ -40,50 +114,50 @@ body {
 	/* border: solid 0.1px black; */
 }
 
-.mycol2,
-.mycol3,
-.mycol4 {
+.row3col2,
+.row3col3,
+.row3col4 {
 	border-right: solid 1px;
 	border-left: solid 1px;
 	border-color: aliceblue;
 }
 
-.mycol1,
-.mycol2,
-.mycol3,
-.mycol4,
-.mycol5 {
+.row3col1,
+.row3col2,
+.row3col3,
+.row3col4,
+.row3col5 {
 	border-top: solid aliceblue 2px;
 	position: relative;
 	top: 88%;
 	min-width: 5%;
 }
 
-.mycol1,
-.mycol5 {
+.row3col1,
+.row3col5 {
 	border-color: aliceblue;
 }
 
-.mycol1 {
+.row3col1 {
 	border-left: solid 0px;
 	border-right: solid 1px;
 	border-color: aliceblue;
 	background-color: rgb(26, 31, 50, 1);
 }
 
-.mycol2 {
+.row3col2 {
 	background-color: rgb(48, 49, 70, 1);
 }
 
-.mycol3 {
+.row3col3 {
 	background-color: rgb(23, 25, 38, 1);
 }
 
-.mycol4 {
+.row3col4 {
 	background-color: rgba(84, 71, 91, 1);
 }
 
-.mycol5 {
+.row3col5 {
 	border-right: solid 0px;
 	border-left: solid 1px;
 	border-color: aliceblue;
@@ -127,11 +201,11 @@ body {
 	}
 }
 
-.mycol1:hover,
-.mycol2:hover,
-.mycol3:hover,
-.mycol4:hover,
-.mycol5:hover {
+.row3col1:hover,
+.row3col2:hover,
+.row3col3:hover,
+.row3col4:hover,
+.row3col5:hover {
 	animation: 0.5s slide-up;
 	border-top: solid aliceblue 0px;
 	top: 0%;
