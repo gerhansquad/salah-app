@@ -24,15 +24,16 @@ document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
 	try {
 		navigator.geolocation.getCurrentPosition(onSuccess, onError);
+		// onSuccess("test");
 	} catch (error) {
-		$("#row2").text(error);
+		$("#first-prayer").text(error);
 	}
 }
 
 // onSuccess Callback
 // This method accepts a Position object, which contains the
 // current GPS coordinates
-let onSuccess = function (position) {
+function onSuccess(position) {
 	const AdhanAPIParams = {
 		latitude: "51.508515",
 		longitude: "-0.1254872",
@@ -46,17 +47,15 @@ let onSuccess = function (position) {
 		AdhanAPIParams,
 		{ Authorization: "OAuth2: token" },
 		function (response) {
-			// stuff = JSON.parse(response.data);
-			// console.log(stuff.message);
-			$("#row1").text(response.data);
+			$("#first-prayer").text(response.data);
 		},
 		function (response) {
-			$("#row2").text(response.error);
+			$("#second-prayer").text(response.error);
 		}
 	);
-};
+}
 
 // onError Callback receives a PositionError object
 function onError(error) {
-	$("#row2").text(error.message);
+	$("#second-prayer").text(error.message);
 }
