@@ -19,47 +19,44 @@
 
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-document.addEventListener("deviceready", onDeviceReady, false)
+document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
-	// Cordova is now initialized. Have fun!
-	navigator.geolocation.getCurrentPosition(onSuccess, onError)
+	try {
+		navigator.geolocation.getCurrentPosition(onSuccess, onError);
+	} catch (error) {
+		$("#row2").text(error);
+	}
 }
 
 // onSuccess Callback
 // This method accepts a Position object, which contains the
 // current GPS coordinates
-//
 let onSuccess = function (position) {
-
-	const otherAPIParams = {
-		user_ip: "5.30.161.11",
-		country: "AE",
-		zipcode: "00000"
-	}
-
 	const AdhanAPIParams = {
-		latitude:"51.508515",
-		longitude:"-0.1254872",
-		method:"2",
-		month:"4",
-		year:"2017"
-	}
+		latitude: "51.508515",
+		longitude: "-0.1254872",
+		method: "2",
+		month: "4",
+		year: "2017",
+	};
 
-	cordova.plugin.http.get('https://api.aladhan.com/v1/calendar',
-	AdhanAPIParams,
-	{ Authorization: 'OAuth2: token' }, function(response) {
-		// stuff = JSON.parse(response.data);
-		// console.log(stuff.message);
-  		$("#row1").text(response.data)
-	}, function(response) {
-  		$("#row2").text(response.error)
-	});
-}
-
+	cordova.plugin.http.get(
+		"https://api.aladhan.com/v1/calendar",
+		AdhanAPIParams,
+		{ Authorization: "OAuth2: token" },
+		function (response) {
+			// stuff = JSON.parse(response.data);
+			// console.log(stuff.message);
+			$("#row1").text(response.data);
+		},
+		function (response) {
+			$("#row2").text(response.error);
+		}
+	);
+};
 
 // onError Callback receives a PositionError object
-//
 function onError(error) {
-	alert("code: " + error.code + "\n" + "message: " + error.message + "\n")
+	$("#row2").text(error.message);
 }

@@ -22,7 +22,7 @@ body {
 	height: 20vh;
 }
 
-.myrow2, 
+.myrow2,
 .myrow3 {
 	height: 40vh;
 }
@@ -57,25 +57,6 @@ body {
 	position: relative;
 	top: 88%;
 	min-width: 5%;
-}
-
-@keyframes slide-up {
-	0% {
-		top: 88%;
-	}
-	100% {
-		top: 0%;
-	}
-}
-
-.mycol1:hover,
-.mycol2:hover,
-.mycol3:hover,
-.mycol4:hover,
-.mycol5:hover {
-	animation: 0.5s slide-up;
-	border-top: solid aliceblue 0px;
-	top: 0%;
 }
 
 .mycol1,
@@ -131,4 +112,27 @@ body {
 	filter: invert(100%);
 	padding: 22%;
 	padding-top: 12%;
+}
+
+/******************************************************************************************************/
+/*										Slider Animation											  */
+/******************************************************************************************************/
+
+@keyframes slide-up {
+	0% {
+		top: 88%;
+	}
+	100% {
+		top: 0%;
+	}
+}
+
+.mycol1:hover,
+.mycol2:hover,
+.mycol3:hover,
+.mycol4:hover,
+.mycol5:hover {
+	animation: 0.5s slide-up;
+	border-top: solid aliceblue 0px;
+	top: 0%;
 }
