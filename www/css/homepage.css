@@ -10,7 +10,7 @@ body {
 }
 
 /******************************************************************************************************/
-/*										Main Container Layout and Structure							  */
+/*										Main Container: Layout and Structure							  */
 /******************************************************************************************************/
 
 .fill {
@@ -18,24 +18,31 @@ body {
 	overflow: hidden;
 }
 
-.myrow1 {
-	height: 20vh;
-}
-
+.myrow1,
 .myrow2,
 .myrow3 {
-	height: 40vh;
+	/* border: solid 1px gold; */
+}
+
+.myrow1 {
+	height: 32.5vh;
+}
+
+.myrow2 {
+	height: 26.5vh;
+}
+.myrow3 {
+	height: 41vh;
 }
 
 .myrow2 {
 	justify-content: center;
 	padding-left: 10%;
 	padding-right: 10%;
-	/* border: solid 2px gold; */
 }
 
 /******************************************************************************************************/
-/*										Logo and Prayer Window: Layout and Structure						  */
+/*										Logo and Prayer Window: Layout and Structure				  */
 /******************************************************************************************************/
 
 .row2row1,
@@ -67,38 +74,41 @@ body {
 }
 
 /******************************************************************************************************/
-/*										Logo and Prayer Window: Content					  */
+/*										Logo and Prayer Window: Content								  */
 /******************************************************************************************************/
 .logo {
 	width: auto;
-	height: 100%;
+	height: 88%;
 	filter: invert(100%);
 	/* border: gold solid 1px; */
+	padding: 0%;
 }
 
 #first-prayer,
 #time-left,
 #second-prayer {
 	margin: 0;
+	/* border: black solid 1px; */
 }
 
 #first-prayer {
-	font-size: 3.5vh;
-	font-weight: bold;
-	/* border: red solid 1px; */
+	font-size: 3.75vh;
+	line-height: 0.75;
+	padding: 0px;
+	/* font-weight: bold; */
 }
 #time-left {
-	font-weight: bold;
+	font-size: 9.5vh;
+	line-height: 0.75;
+	padding: 0px;
 	font-family: helvetica;
-	font-size: 15vh;
-	line-height: 0.6;
-	/* border: black solid 1px; */
+	font-weight: bold;
 }
 #second-prayer {
-	line-height: 0.6;
-	font-size: 3vh;
-	font-weight: bold;
-	/* border: red solid 1px; */
+	font-size: 2.75vh;
+	line-height: 0.75;
+	padding: 0px;
+	/* font-weight: bold; */
 }
 
 /******************************************************************************************************/
@@ -109,9 +119,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	height: 29%;
-
-	/* Uncomment next line when debugging the slider: */
-	/* border: solid 0.1px black; */
+	/* border: solid 0.1px white; */
 }
 
 .row3col2,
@@ -197,7 +205,7 @@ body {
 		top: 88%;
 	}
 	100% {
-		top: 0%;
+		top: 4%;
 	}
 }
 
@@ -208,5 +216,5 @@ body {
 .row3col5:hover {
 	animation: 0.5s slide-up;
 	border-top: solid aliceblue 0px;
-	top: 0%;
+	top: 4%;
 }
