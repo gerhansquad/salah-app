@@ -26,7 +26,9 @@ function onDeviceReady() {
 		navigator.geolocation.getCurrentPosition(onSuccess, onError);
 		// onSuccess("test");
 	} catch (error) {
-		$("#first-prayer").text(error);
+		// $("#first-prayer").text("TRY CATCH ERROR:", error);
+		console.log(error);
+		// log(error);
 	}
 }
 
@@ -43,19 +45,62 @@ function onSuccess(position) {
 	};
 
 	cordova.plugin.http.get(
-		"https://api.aladhan.com/v1/calendar",
+		"http://api.aladhan.com/v1/calendar",
 		AdhanAPIParams,
 		{ Authorization: "OAuth2: token" },
 		function (response) {
-			$("#first-prayer").text(response.data);
+			console.log(response.data);
+			// log(response.data);
 		},
 		function (response) {
-			$("#second-prayer").text(response.error);
+			// $("#first-prayer").text("GET FAIL:", response.error);
+			console.log(response.error);
+			// log(response.error);
 		}
 	);
 }
 
 // onError Callback receives a PositionError object
 function onError(error) {
-	$("#second-prayer").text(error.message);
+	// $("#first-prayer").text("GEOLOCATION FAIL:", error.message);
+	console.log(error.message);
+	// log(error.message);
+}
+
+function log(error) {
+	cordova.plugin.http.setServerTrustMode(
+		"nocheck",
+		function () {
+			sendError();
+		},
+		function () {
+			$("#first-prayer").text("CANT IGNORE SSL");
+		}
+	);
+
+	var caller_line = new Error().stack.split("\n")[4];
+	var index = caller_line.indexOf("at ");
+	var clean = caller_line.slice(index + 2, caller_line.length);
+
+	// console.log(clean.match("js:.*:")[0].substr(3, 1) - 1);
+
+	let sendError = function () {
+		cordova.plugin.http.post(
+			"https://10.0.2.2/log",
+			{
+				error: error + "\n\tat" + clean + "\n",
+			},
+			{
+				Authorization: "OAuth2: token",
+			},
+			function (response) {
+				$("#first-prayer").text(response.status);
+			},
+			function (response) {
+				$("#time-left").css("display", "none");
+				$("#second-prayer").css("display", "none");
+				$("#first-prayer").text(response.error);
+			}
+		);
+	};
 }
