@@ -21,7 +21,7 @@ body {
 .myrow1,
 .myrow2,
 .myrow3 {
-	/* border: solid 1px gold; */
+	border: solid 1px gold;
 }
 
 .myrow1 {
@@ -52,6 +52,8 @@ body {
 	position: relative;
 	top: 25%;
 	min-width: 5%;
+	height: fit-content;
+	/* border: solid white 1px; */
 }
 
 /******************************************************************************************************/
