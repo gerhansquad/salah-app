@@ -118,9 +118,9 @@ body {
 
 .innerRow3 {
 	justify-content: center;
-	align-items: center;
-	height: 29%;
-	/* border: solid 0.1px white; */
+	height: 15%;
+	/* border: solid 0.1px red; */
+	align-content: center;
 }
 
 .row3col2,
@@ -180,7 +180,7 @@ body {
 /* Mandatory Prayer Text */
 .prayer-name {
 	margin-bottom: 0%;
-	font-family: "Source Sans Pro", sans-serif;
+	font-family: "Source Sans Variable", sans-serif;
 	padding: 9%;
 	padding-inline: 0% 0%;
 	text-align: center;
@@ -191,10 +191,19 @@ body {
 /*  Mandatory Icons */
 .mandatory-icon {
 	width: auto;
-	height: auto;
+	height: 40%;	
 	filter: invert(100%);
-	padding: 22%;
-	padding-top: 12%;
+	/* border: solid black 1px; */
+}
+
+.prayer-types {
+	margin-bottom: 0%;
+	font-family: "Source Sans Pro", sans-serif;
+	padding: 0%;
+	padding-inline: 0% 0%;
+	text-align: center;
+	color: aliceblue;
+	font-size: 3.25vw;
 }
 
 /******************************************************************************************************/
