@@ -78,7 +78,7 @@ body {
 .row2row2 {
 	text-transform: uppercase;
 	height: 12.5%;
-	padding-top: 2%;
+	padding-top: 0.8vh;
 }
 .row2row3 {
 	height: 33%;
@@ -133,7 +133,7 @@ body {
 
 .innerRow3 {
 	justify-content: center;
-	height: 15%;
+	height: 10vh;
 	/* border: solid 0.1px red; */
 	align-content: center;
 }
@@ -188,48 +188,26 @@ body {
 	background-color: rgb(117, 86, 101, 1);
 }
 
+.prayer-name-row {
+	justify-content: center;
+	height: 11.5%;
+	/* border: solid 0.1px red; */
+	align-content: center;
+}
+
 /******************************************************************************************************/
 /*										Slider Open state: Text and Icons							  */
 /******************************************************************************************************/
 
 /* Mandatory Prayer Text for Mobile XS */
 .prayer-name {
+	line-height: 0.8;
 	margin-bottom: 0%;
 	font-family: "Source Sans Pro", sans-serif;
-	padding: 9%;
-	padding-top: 18%;
 	padding-inline: 0% 0%;
 	text-align: center;
 	color: aliceblue;
 	font-size: 4vw;
-}
-
-/* Mobile S */
-@media only screen and (min-width: 280px) {
-	.prayer-name {
-		padding-top: 16%;
-	}
-}
-
-/* Mobile M */
-@media only screen and (min-width: 320px) {
-	.prayer-name {
-		padding-top: 12%;
-	}
-}
-
-/* Mobile L */
-@media only screen and (min-width: 375px) {
-	.prayer-name {
-		padding-top: 9%;
-	}
-}
-
-/* Mobile XL */
-@media only screen and (min-width: 410px) {
-	.prayer-name {
-		padding-top: 7%;
-	}
 }
 
 /*  Mandatory Icons */
