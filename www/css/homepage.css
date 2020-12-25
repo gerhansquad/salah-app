@@ -78,6 +78,7 @@ body {
 .row2row2 {
 	text-transform: uppercase;
 	height: 12.5%;
+	padding-top: 2%;
 }
 .row2row3 {
 	height: 33%;
@@ -117,7 +118,7 @@ body {
 	font-size: 9.5vh;
 	line-height: 0.75;
 	padding: 0px;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	font-weight: bold;
 }
 #second-prayer {
@@ -205,7 +206,7 @@ body {
 /*  Mandatory Icons */
 .mandatory-icon {
 	width: auto;
-	height: 40%;	
+	height: 40%;
 	filter: invert(100%);
 	/* border: solid black 1px; */
 }
