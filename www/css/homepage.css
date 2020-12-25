@@ -103,7 +103,6 @@ body {
 	font-size: 3.75vh;
 	line-height: 0.75;
 	padding: 0px;
-	/* font-weight: bold; */
 }
 #time-left {
 	font-size: 9.5vh;
@@ -115,7 +114,6 @@ body {
 #second-prayer {
 	font-size: 2.75vh;
 	padding: 0px;
-	/* font-weight: bold; */
 }
 
 /******************************************************************************************************/
@@ -125,9 +123,7 @@ body {
 .innerRow3 {
 	justify-content: center;
 	height: 10vh;
-	/* border: solid 0.1px red; */
 	align-content: center;
-	margin-block: 1vmin;
 }
 
 .row3col1,
@@ -182,8 +178,7 @@ body {
 
 .prayer-name-row {
 	justify-content: center;
-	height: 11.5%;
-	/* border: solid 0.1px red; */
+	height: 13.7%;
 	align-content: center;
 }
 
