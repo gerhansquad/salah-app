@@ -20,180 +20,225 @@
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 
-let fileObj
-let salah_times 
-let saved_month
+var system_month // to store the current month
 
-let salahExists // Global existence var
-let monthExists // Global existence var
+var geodata // to store the location data
 
-let system_month
-
-function setFileObj(isWriting, fname){
-	if(isWriting){
-		window.requestFileSystem(LocalFileSystem.PERSISTENT, 100000, function (fs) {
-			fs.root.getFile(fname, { create: true, exclusive: false }, function (fileEntry) {
-				fileObj = fileEntry
-				console.log(`set fileObj to ${fileObj.name} while writing`)
-			})
-		}, function(error){
-			console.log("WRITE ERROR:",error)
-		})
-	} else {
-		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {
-			fs.root.getFile(fname, { create: false }, function (fileEntry) {
-				fileObj = fileEntry
-				console.log(`set fileObj to ${fileObj.name} while reading`)
-			})
-		},function(error){
-			console.log("READ ERROR:",error)
-		})
-	}
-}
-
+// ------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------FILE SECTION------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------
 function writeFile(fileEntry, dataObj) {
-    // Create a FileWriter object for our FileEntry (log.txt).
-    fileEntry.createWriter(function (fileWriter) {
+   // Create a FileWriter object for our FileEntry (log.txt).
+   fileEntry.createWriter(function (fileWriter) {
+      fileWriter.onwriteend = function () {
+         console.log("Successful file write...")
+         // readFile(fileEntry)
+      }
 
-        fileWriter.onwriteend = function() {
-            console.log("Successful file write...")
-			// readFile(fileEntry)
-        }
+      fileWriter.onerror = function (e) {
+         console.log("Failed file write: " + e.toString())
+      }
 
-        fileWriter.onerror = function (e) {
-            console.log("Failed file write: " + e.toString())
-        }
+      // If data object is not passed in,
+      // create a new Blob instead.
+      if (!dataObj) {
+         dataObj = new Blob(["some file data"], { type: "application/json" })
+      }
 
-        // If data object is not passed in,
-        // create a new Blob instead.
-        if (!dataObj) {
-            dataObj = new Blob(['some file data'], { type: 'application/json' })
-        }
-
-        fileWriter.write(dataObj)
-    })
+      fileWriter.write(dataObj)
+   })
 }
 
-function createFile(data, fname){
-	setFileObj(true, fname)
-	writeFile(fileObj,{month:system_month})
+// This function creates fileEntry obj and calls writeFile()
+function createwriteFile(data, fname) {
+   window.requestFileSystem(
+      LocalFileSystem.PERSISTENT,
+      100000,
+      function (fs) {
+         fs.root.getFile(fname, { create: true, exclusive: false }, function (fileEntry) {
+            if (fname.localeCompare("saved-month.json") == 0) {
+               console.log("Writing file saved-month")
+               writeFile(fileEntry, { month: system_month })
+            } else {
+               console.log("Writing file salah-times")
+               writeFile(fileEntry, data)
+            }
+         })
+      },
+      function (error) {
+         console.log("WRITE ERROR:", error)
+      }
+   )
 }
 
-function setJSON(fileEntry) {
-	fileEntry.file(function (file) {
-		var reader = new FileReader()
+// this method gets checks for the month and if the times don't need changing, it will do what we want to with salah data via funcs
+function displayData(fileEntry, fdata) {
+   data = JSON.parse(fdata)
+   if (fileEntry.name.localeCompare("saved-month.json") == 0) {
+      console.log("Displaying saved month: " + data.month)
+      console.log(system_month)
+      if (system_month != data.month) {
+         console.log("month is diff, making api req")
+         reqAPI()
+      }
+   } else {
+      // Here do whatever we need to with the stored salah data (display/call funstion/etc)
+      console.log("Displaying saved salah times: " + JSON.stringify(data))
 
-		reader.onloadend = function() {
-			// let times = JSON.parse(this.result)
-			console.log("Successful file read: " + this.result)
-			if(fileEntry.name == "saved-month.json"){
-				saved_month = (JSON.parse(this.result).month)
-			} else if (fileEntry.name == "salah-time.json"){
-				salah_times = JSON.parse(this.result)
-			}
-			console.log(fileEntry.name,"succesfully set global var")
-			// displayFileData(fileEntry.fullPath + ": " + this.result)
-			
-		}
-		reader.readAsText(file)
-
-	}, function(error){
-		console.log(error)
-	})
+      // Display Salah Times for the month
+      console.log(data.data.length)
+      for (var i = 0; i < data.data.length; i++) {
+         console.log(JSON.stringify(data.data[i].timings))
+      }
+   }
 }
 
-function checkIfSalahFileExists(){
-	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem){
-		// reading the filesystem to see if fname exists
-		fileSystem.root.getFile("salah-times.json", { create: false }, fileExists, function(){
-			salahExists = false
-			console.log("Successfully set salahExists");
-		})
-	}, getFSFail) // of requestFileSystem
+// This function reads the file data and calls displayData()
+function getFileData(fileEntry) {
+   fileEntry.file(
+      function (file) {
+         var reader = new FileReader()
+         reader.onloadend = function () {
+            console.log("Successful file read: " + this.result)
+            displayData(fileEntry, this.result)
+         }
+
+         reader.readAsText(file)
+      },
+      function () {
+         console.log("File Read Error")
+      }
+   )
 }
 
-function checkIfMonthFileExists(){
-	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem){
-		// reading the filesystem to see if fname exists
-		fileSystem.root.getFile("saved-month.json", { create: false }, fileExists, function(){
-			monthExists = false
-			console.log("Successfully set monthExists");
-		})
-	}, getFSFail) // of requestFileSystem
+// This function gets fileWrite obj for reading and calls getFileData()
+function readFile(fname) {
+   window.requestFileSystem(
+      LocalFileSystem.PERSISTENT,
+      0,
+      function (fs) {
+         fs.root.getFile(fname, { create: false, exclusive: false }, function (fileEntry) {
+            if (fname.localeCompare("saved-month.json") == 0) {
+               console.log("Reading saved-month.json")
+               getFileData(fileEntry)
+            } else {
+               console.log("Reading salah-times.json")
+               getFileData(fileEntry)
+            }
+         })
+      },
+      function (error) {
+         console.log("WRITE ERROR:", error)
+      }
+   )
 }
 
-function fileExists(fileEntry){
-	console.log("File " + fileEntry.fullPath + " exists!")
-	if(fileEntry.name == "salah-times.json"){
-		salah_times_exist = true
-	} else if (fileEntry.name == "saved-month.json") {
-		saved_month_exist = true
-	}
+// ------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------API SECTION------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------
+function reqAPI() {
+   const AdhanAPIParams = {
+      latitude: "51.508515",
+      longitude: "-0.1254872",
+      method: "2",
+   }
+   // this is a new month OR no prayer info saved prior
+   cordova.plugin.http.get(
+      "https://api.aladhan.com/v1/calendar",
+      AdhanAPIParams,
+      { Authorization: "OAuth2: token" },
+      function (response) {
+         createwriteFile(response.data, "salah-times.json")
+         createwriteFile(system_month, "saved-month.json")
+      },
+      function (response) {
+         console.log(response.error)
+      }
+   )
 }
 
-function getFSFail(evt) {
-	console.log(evt.target.error.code)
+// ------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------CHECK FILE EXISTS SECTION-----------------------------------
+// ------------------------------------------------------------------------------------------------------------
+
+function checkIfSalahFileExists() {
+   window.requestFileSystem(
+      LocalFileSystem.PERSISTENT,
+      0,
+      function (fileSystem) {
+         fileSystem.root.getFile("salah-times.json", { create: false }, fileExists, fileDoesNotExist)
+      },
+      getFSFail
+   )
+
+   function fileExists(fileEntry) {
+      console.log("File " + fileEntry.fullPath + " exists!")
+   }
+   function fileDoesNotExist() {
+      console.log("salah file doesn't exist, make api call, calling reqAPI()")
+      reqAPI() //If salah file doesn't exist, make API req
+   }
+   function getFSFail(evt) {
+      console.log(evt.target.error.code)
+   }
 }
 
+function checkIfMonthFileExists() {
+   window.requestFileSystem(
+      LocalFileSystem.PERSISTENT,
+      0,
+      function (fileSystem) {
+         fileSystem.root.getFile("saved-month.json", { create: false }, fileExists, fileDoesNotExist)
+      },
+      getFSFail
+   )
 
+   function fileExists(fileEntry) {
+      console.log("File " + fileEntry.fullPath + " exists!")
+   }
+   function fileDoesNotExist() {
+      console.log("month file doesn't exist, creating month file by calling createwrite()")
+      createwriteFile(new Date().getMonth() + 1, "saved-month.json")
+   }
+   function getFSFail(evt) {
+      console.log(evt.target.error.code)
+   }
+}
+
+// ------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------MAIN SECTION------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------
 document.addEventListener("deviceready", onDeviceReady, false)
 
 function onDeviceReady() {
-	system_month = new Date().getMonth()+1
-	checkIfMonthFileExists()
-	checkIfSalahFileExists()
-	// navigator.geolocation.getCurrentPosition(onSuccess, onError)
-	onSuccess("test")
+   system_month = new Date().getMonth() + 1
+   // navigator.geolocation.getCurrentPosition(onSuccess, onError)
+   onSuccess("test")
 }
 
 // onSuccess Callback
 // This method accepts a Position object, which contains the
 // current GPS coordinates
 function onSuccess(position) {
-	const AdhanAPIParams = {
-		latitude: "51.508515",
-		longitude: "-0.1254872",
-		method: "2"
-	}
+   // Get postion data and store in geodata
 
-	// create file "saved-month"
-	if(!monthExists) {
-		createFile(system_month,"saved-month.json")
-	} else {
-		// window.window.saved_month exists, but we still want to read it
-		setFileObj(false, "saved-month.json") // sets fileObj to "saved-month.json"
-		setJSON(fileObj) // sets window.window.saved_month global variable
-	}
+   // checkIfSalahFileExists
+   checkIfSalahFileExists()
+   // checkIfMonthFileExists
+   checkIfMonthFileExists()
 
-	if(saved_month != system_month || salahExists ){
-		// this is a new month OR no prayer info saved prior
-		cordova.plugin.http.get(
-			"https://api.aladhan.com/v1/calendar",
-			AdhanAPIParams,
-			{ Authorization: "OAuth2: token" },
-			function (response) {
-				createFile(response.data,"salah-times.json")
-				createFile(system_month,"saved-month.json")
-			},
-			function (response) {
-				console.log(response.error)
-			}
-		)
-	} else {
-		// still the same month
-		// Parse json and display the timings
-		setFileObj(false, "salah-times.json")
-		setJSON(fileObj)
+   // now read both files
+   var delayInMilliseconds = 4000
+   setTimeout(function () {
+      readFile("saved-month.json")
+   }, delayInMilliseconds)
 
-		console.log(salah_times.data.length)
-		for (var i = 0; i<salah_times.data.length; i++) {
-			console.log(salah_times.data[i].timings.Fajr)
-		}
-		
-	}
+   setTimeout(function () {
+      readFile("salah-times.json")
+   }, delayInMilliseconds)
 }
 
 // onError Callback receives a PositionError object
 function onError(error) {
-	console.log(error.message)
+   console.log(error.message)
 }

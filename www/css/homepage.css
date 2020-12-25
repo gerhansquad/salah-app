@@ -18,27 +18,18 @@ body {
 	overflow: hidden;
 }
 
-.myrow1,
-.myrow2,
-.myrow3 {
-	/* border: solid 1px gold; */
-}
-
 .myrow1 {
-	height: 32.5vh;
+	height: 30vh;
 }
 
 .myrow2 {
-	height: 26.5vh;
-}
-.myrow3 {
-	height: 41vh;
-}
-
-.myrow2 {
+	height: 29vh;
 	justify-content: center;
 	padding-left: 10%;
 	padding-right: 10%;
+}
+.myrow3 {
+	height: 41vh;
 }
 
 /******************************************************************************************************/
@@ -60,10 +51,10 @@ body {
 /*										Logo and Prayer Window: Layout and Structure				  */
 /******************************************************************************************************/
 
-.row2row1,
-.row2row2,
-.row2row3,
-.row2row4 {
+.logo-row,
+.first-prayer-row,
+.time-left-row,
+.second-prayer-row {
 	font-family: "Source Sans Pro", sans-serif;
 	text-align: center;
 	align-items: center;
@@ -71,20 +62,21 @@ body {
 	/* border: solid white 1px; */
 }
 
-.row2row1 {
+.logo-row {
 	justify-content: center;
 	height: 44%;
 }
-.row2row2 {
+.first-prayer-row {
 	text-transform: uppercase;
 	height: 12.5%;
 	padding-top: 2%;
 }
-.row2row3 {
+.time-left-row {
 	height: 33%;
+	padding-top: 3%;
 	justify-content: center;
 }
-.row2row4 {
+.second-prayer-row {
 	align-items: flex-start;
 	/* text-transform: uppercase; */
 	height: 10.5%;
@@ -96,7 +88,7 @@ body {
 .logo {
 	width: auto;
 	height: 88%;
-	filter: invert(100%);
+	filter: invert(99%) sepia(52%) saturate(5%) hue-rotate(160deg) brightness(103%) contrast(102%);
 	/* border: gold solid 1px; */
 	padding: 0%;
 }
@@ -133,7 +125,7 @@ body {
 
 .innerRow3 {
 	justify-content: center;
-	height: 15%;
+	height: 10vh;
 	/* border: solid 0.1px red; */
 	align-content: center;
 }
@@ -206,7 +198,7 @@ body {
 /*  Mandatory Icons */
 .mandatory-icon {
 	width: auto;
-	height: 40%;
+	height: 45%;
 	filter: invert(100%);
 	/* border: solid black 1px; */
 }
