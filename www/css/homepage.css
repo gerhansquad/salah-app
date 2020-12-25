@@ -21,7 +21,7 @@ body {
 .myrow1,
 .myrow2,
 .myrow3 {
-	border: solid 1px gold;
+	/* border: solid 1px gold; */
 }
 
 .myrow1 {
