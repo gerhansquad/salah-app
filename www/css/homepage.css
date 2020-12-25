@@ -192,15 +192,44 @@ body {
 /*										Slider Open state: Text and Icons							  */
 /******************************************************************************************************/
 
-/* Mandatory Prayer Text */
+/* Mandatory Prayer Text for Mobile XS */
 .prayer-name {
 	margin-bottom: 0%;
 	font-family: "Source Sans Pro", sans-serif;
 	padding: 9%;
+	padding-top: 18%;
 	padding-inline: 0% 0%;
 	text-align: center;
 	color: aliceblue;
 	font-size: 4vw;
+}
+
+/* Mobile S */
+@media only screen and (min-width: 280px) {
+	.prayer-name {
+		padding-top: 16%;
+	}
+}
+
+/* Mobile M */
+@media only screen and (min-width: 320px) {
+	.prayer-name {
+		padding-top: 12%;
+	}
+}
+
+/* Mobile L */
+@media only screen and (min-width: 375px) {
+	.prayer-name {
+		padding-top: 9%;
+	}
+}
+
+/* Mobile XL */
+@media only screen and (min-width: 410px) {
+	.prayer-name {
+		padding-top: 7%;
+	}
 }
 
 /*  Mandatory Icons */
