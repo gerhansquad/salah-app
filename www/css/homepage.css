@@ -138,23 +138,23 @@ body {
 	align-content: center;
 }
 
-.row3col2,
-.row3col3,
-.row3col4 {
-	border-right: solid 1px;
-	border-left: solid 1px;
-	border-color: aliceblue;
-}
-
 .row3col1,
 .row3col2,
 .row3col3,
 .row3col4,
 .row3col5 {
-	border-top: solid aliceblue 2px;
+	border-top: solid aliceblue 0.35vw;
 	position: relative;
 	top: 88%;
 	min-width: 5%;
+}
+
+.row3col2,
+.row3col3,
+.row3col4 {
+	border-right: solid 0.3vw;
+	border-left: solid 0.3vw;
+	border-color: aliceblue;
 }
 
 .row3col1,
@@ -169,6 +169,13 @@ body {
 	background-color: rgb(26, 31, 50, 1);
 }
 
+.row3col5 {
+	border-right: solid 0px;
+	border-left: solid 1px;
+	border-color: aliceblue;
+	background-color: rgb(117, 86, 101, 1);
+}
+
 .row3col2 {
 	background-color: rgb(48, 49, 70, 1);
 }
@@ -179,13 +186,6 @@ body {
 
 .row3col4 {
 	background-color: rgba(84, 71, 91, 1);
-}
-
-.row3col5 {
-	border-right: solid 0px;
-	border-left: solid 1px;
-	border-color: aliceblue;
-	background-color: rgb(117, 86, 101, 1);
 }
 
 .prayer-name-row {
