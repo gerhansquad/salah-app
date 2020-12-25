@@ -22,7 +22,7 @@
 
 var system_month; // to store the current month
 
-var geodata; // to store the location data
+var geodata = {}; // to store the location data
 
 // ------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------FILE SECTION------------------------------------------------
@@ -128,7 +128,7 @@ function readFile(fname) {
 			});
 		},
 		function (error) {
-			console.log("WRITE ERROR:", error);
+			console.log("READ ERROR:", error);
 		}
 	);
 }
@@ -138,8 +138,8 @@ function readFile(fname) {
 // ------------------------------------------------------------------------------------------------------------
 function reqAPI() {
 	const AdhanAPIParams = {
-		latitude: "51.508515",
-		longitude: "-0.1254872",
+		latitude: `${geodata.latitude}`,
+		longitude: `${geodata.longitude}`,
 		method: "2",
 	};
 	// this is a new month OR no prayer info saved prior
@@ -152,7 +152,7 @@ function reqAPI() {
 			createwriteFile(system_month, "saved-month.json");
 		},
 		function (response) {
-			console.log(response.error);
+			console.log(`API CALL ERROR: ${response.error}`);
 		}
 	);
 }
@@ -212,8 +212,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
 	system_month = new Date().getMonth() + 1;
-	// navigator.geolocation.getCurrentPosition(onSuccess, onError)
-	onSuccess("test");
+	navigator.geolocation.getCurrentPosition(onSuccess, onError);
 }
 
 // onSuccess Callback
@@ -221,6 +220,11 @@ function onDeviceReady() {
 // current GPS coordinates
 function onSuccess(position) {
 	// Get postion data and store in geodata
+	geodata.latitude = position.coords.latitude;
+	geodata.longitude = position.coords.longitude;
+
+	// console.log(`Latitude: ${geodata.latitude}; Longitude: ${geodata.longitude}`);
+	// console.log = function () {};
 
 	// checkIfSalahFileExists
 	checkIfSalahFileExists();
