@@ -90,7 +90,7 @@ function displayData(fileEntry, fdata) {
 			 * for faster retrieval and deletion
 			 */
 
-			//This is here to check the users timezone.
+			//This is here to check the users timezone. (It's here because in the one up we are only reading the file Saved-month.)
 			console.log("System's Current Timezone: " + timezone)
 			console.log("Api's Timezones: " + data.data[0].meta.timezone)
 
