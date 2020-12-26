@@ -1,6 +1,6 @@
 # Salah
 
-Track your prayers with Salah©!
+Track your prayers with Salah!
 
 [![Mockup](https://media.discordapp.net/attachments/787102126606123038/791381788299362344/132143972_398462931468762_7390489076958054486_n.png?width=679&height=701)]()  
  _For illustration purposes only. Actual app may vary due to enhancements._
