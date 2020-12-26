@@ -24,8 +24,7 @@ var system_month // to store the current month
 
 var geodata = {} // to store the location data
 
-// var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone //IDK if this should be here. But this gets us the users timezone, so we could check it against the apis timezone.
-
+var timezone //This gets us the users current timezone, so we could check it against the api's timezone.
 // ------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------FILE SECTION------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------
@@ -92,43 +91,43 @@ function displayData(fileEntry, fdata) {
 			 */
 
 			//This is here to check the users timezone.
-			//Test, Needs To Be Reviewed First.
-			// if (timezone == data.data[0].meta.timezone) {
-			// 		Put everything we wrote down there here until the error part.
-			// } else {
-			// 	console.log("timezone is diff, making api req")
-			// 	reqAPI()
-			// }
-			let currentMonthPrayerData = {}
+			console.log("System's Current Timezone: " + timezone)
+			console.log("Api's Timezones: " + data.data[0].meta.timezone)
 
-			for (var i = 0; i < data.data.length; i++) {
-				currentMonthPrayerData[`${i}`] = data.data[i].timings
+			if (timezone == data.data[0].meta.timezone) {
+				let currentMonthPrayerData = {}
+				for (var i = 0; i < data.data.length; i++) {
+					currentMonthPrayerData[`${i}`] = data.data[i].timings
+				}
+				// Getting today's day (1-31)
+				let currentDate = new Date()
+				let currentDay = currentDate.getDate()
+				// let currentHour = currentDate.getHours();
+				// let currentMinute = currentDate.getMinutes();
+
+				// Saving today's prayer data to a variable
+				let currentDayPrayerData = currentMonthPrayerData[`${currentDay}`] // {"Fajr":"06:04 (PST)","Sunrise":"07:22 (PST)","Dhuhr":"12:10 (PST)",...}
+
+				// Deleting Sunset as it is the same value as Maghrib
+				delete currentDayPrayerData["Sunset"]
+
+				// Deleting Imsak as it didn't come sorted into the right position
+				delete currentDayPrayerData["Imsak"]
+
+				/**
+				 * Pushing each Waqt's prayer time (already sorted) to an array so that
+				 * we can determine when in the timeline the system time falls
+				 */
+				let currentDayPrayerDataArray = []
+				for (const waqt in currentDayPrayerData) {
+					currentDayPrayerDataArray.push(currentDayPrayerData[waqt])
+				}
+				insertDateSorted(currentDayPrayerDataArray, currentDate)
+				updatePrayerNames(currentDate, currentDayPrayerData, currentDayPrayerDataArray)
+			} else {
+				console.log("timezone is diff, making api req")
+				reqAPI()
 			}
-			// Getting today's day (1-31)
-			let currentDate = new Date()
-			let currentDay = currentDate.getDate()
-			// let currentHour = currentDate.getHours();
-			// let currentMinute = currentDate.getMinutes();
-
-			// Saving today's prayer data to a variable
-			let currentDayPrayerData = currentMonthPrayerData[`${currentDay}`] // {"Fajr":"06:04 (PST)","Sunrise":"07:22 (PST)","Dhuhr":"12:10 (PST)",...}
-
-			// Deleting Sunset as it is the same value as Maghrib
-			delete currentDayPrayerData["Sunset"]
-
-			// Deleting Imsak as it didn't come sorted into the right position
-			delete currentDayPrayerData["Imsak"]
-
-			/**
-			 * Pushing each Waqt's prayer time (already sorted) to an array so that
-			 * we can determine when in the timeline the system time falls
-			 */
-			let currentDayPrayerDataArray = []
-			for (const waqt in currentDayPrayerData) {
-				currentDayPrayerDataArray.push(currentDayPrayerData[waqt])
-			}
-			insertDateSorted(currentDayPrayerDataArray, currentDate)
-			updatePrayerNames(currentDate, currentDayPrayerData, currentDayPrayerDataArray)
 		} catch (error) {
 			console.error(`displayData error: ${error}`)
 		}
@@ -241,8 +240,8 @@ function readFile(fname) {
 // ------------------------------------------------------------------------------------------------------------
 function reqAPI() {
 	const AdhanAPIParams = {
-		latitude: `${geodata.latitude}`,
-		longitude: `${geodata.longitude}`,
+		latitude: `${geodata.latitude}`, //"25.2048" Manual Dubai geoData.
+		longitude: `${geodata.longitude}`, //"55.2708" Manual Dubai geoData.
 		method: "2",
 	}
 	// this is a new month OR no prayer info saved prior
@@ -316,6 +315,7 @@ document.addEventListener("deviceready", onDeviceReady, false)
 function onDeviceReady() {
 	// console.log = function () {};
 	system_month = new Date().getMonth() + 1
+	timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 	navigator.geolocation.getCurrentPosition(onSuccess, onError)
 }
 
