@@ -151,11 +151,20 @@ function insertDateSorted(arr, key) {
 
 function updatePrayerNames(obj, arr) {
 	try {
-		let currentPrayerTime = arr[arr.indexOf(obj) - 1];
-		let nextPrayerTime = arr[arr.indexOf(obj) + 1];
+		let prayerIndex = arr.indexOf(obj);
 
-		$("#first-prayer").text(getKeyByValue(obj, currentPrayerTime));
-		$("#second-prayer").text(getKeyByValue(obj, nextPrayerTime));
+		let currentPrayerIndex = prayerIndex == 0 ? arr.length - 1 : prayerIndex - 1;
+		let currentPrayerTime = arr[currentPrayerIndex];
+
+		let nextPrayerIndex = prayerIndex == arr.length - 1 ? 0 : prayerIndex + 1;
+		let nextPrayerTime = arr[nextPrayerIndex];
+
+		console.log(`${currentPrayerTime} THEN ${nextPrayerTime}`);
+		// console.log(getKeyByValue(obj, currentPrayerTime));
+		// console.log(getKeyByValue(obj, nextPrayerTime));
+
+		// $("#first-prayer").text(getKeyByValue(obj, currentPrayerTime));
+		// $("#second-prayer").text(getKeyByValue(obj, nextPrayerTime));
 
 		function getKeyByValue(object, value) {
 			return Object.keys(object).find((key) => object[key] === value);
