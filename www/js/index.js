@@ -24,6 +24,8 @@ var system_month // to store the current month
 
 var geodata = {} // to store the location data
 
+// var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone //IDK if this should be here. But this gets us the users timezone, so we could check it against the apis timezone.
+
 // ------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------FILE SECTION------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------
@@ -88,11 +90,20 @@ function displayData(fileEntry, fdata) {
 			 * Adding each day's prayer data as a value to a hashmap with the day (1-31) as the key
 			 * for faster retrieval and deletion
 			 */
+
+			//This is here to check the users timezone.
+			//Test, Needs To Be Reviewed First.
+			// if (timezone == data.data[0].meta.timezone) {
+			// 		Put everything we wrote down there here until the error part.
+			// } else {
+			// 	console.log("timezone is diff, making api req")
+			// 	reqAPI()
+			// }
 			let currentMonthPrayerData = {}
+
 			for (var i = 0; i < data.data.length; i++) {
 				currentMonthPrayerData[`${i}`] = data.data[i].timings
 			}
-
 			// Getting today's day (1-31)
 			let currentDate = new Date()
 			let currentDay = currentDate.getDate()
@@ -315,7 +326,6 @@ function onSuccess(position) {
 	// Get postion data and store in geodata
 	geodata.latitude = position.coords.latitude
 	geodata.longitude = position.coords.longitude
-
 	// checkIfSalahFileExists
 	checkIfSalahFileExists()
 	// checkIfMonthFileExists
