@@ -73,7 +73,7 @@ function createwriteFile(data, fname) {
 
 // this method gets checks for the month and if the times don't need changing, it will do what we want to with salah data via funcs
 function displayData(fileEntry, fdata) {
-	data = JSON.parse(fdata);
+	let data = JSON.parse(fdata);
 	if (fileEntry.name.localeCompare("saved-month.json") == 0) {
 		console.log("Displaying saved month: " + data.month);
 		console.log(system_month);
@@ -83,13 +83,85 @@ function displayData(fileEntry, fdata) {
 		}
 	} else {
 		// Here do whatever we need to with the stored salah data (display/call funstion/etc)
-		console.log("Displaying saved salah times: " + JSON.stringify(data));
+		try {
+			/**
+			 * Adding each day's prayer data as a value to a hashmap with the day (1-31) as the key
+			 * for faster retrieval and deletion
+			 */
+			let currentMonthPrayerData = {};
+			for (var i = 0; i < data.data.length; i++) {
+				currentMonthPrayerData[`${i}`] = data.data[i].timings;
+			}
 
-		// Display Salah Times for the month
-		console.log(data.data.length);
-		for (var i = 0; i < data.data.length; i++) {
-			console.log(JSON.stringify(data.data[i].timings));
+			// Getting today's day (1-31)
+			let currentDate = new Date();
+			let currentDay = currentDate.getDate();
+			// let currentHour = currentDate.getHours();
+			// let currentMinute = currentDate.getMinutes();
+
+			// Saving today's prayer data to a variable
+			let currentDayPrayerData = currentMonthPrayerData[`${currentDay}`]; // {"Fajr":"06:04 (PST)","Sunrise":"07:22 (PST)","Dhuhr":"12:10 (PST)",...}
+
+			// Deleting Sunset as it is the same value as Maghrib
+			delete currentDayPrayerData["Sunset"];
+
+			// Deleting Imsak as it didn't come sorted into the right position
+			delete currentDayPrayerData["Imsak"];
+
+			/**
+			 * Pushing each Waqt's prayer time (already sorted) to an array so that
+			 * we can determine when in the timeline the system time falls
+			 */
+			let currentDayPrayerDataArray = [];
+			for (const waqt in currentDayPrayerData) {
+				currentDayPrayerDataArray.push(currentDayPrayerData[waqt]);
+			}
+			insertDateSorted(currentDayPrayerDataArray, currentDate);
+			updatePrayerNames(currentDayPrayerData, currentDayPrayerDataArray);
+		} catch (error) {
+			console.error(`displayData error: ${error}`);
 		}
+	}
+}
+
+// Inserts a date into a sorted list of dates in the right position
+function insertDateSorted(arr, key) {
+	try {
+		for (let i = 0; i < arr.length; i++) {
+			let date = new Date();
+			let time = arr[i].match("[0-9][0-9]:[0-9][0-9]")[0];
+			let hour = time.split(":")[0];
+			hour = hour == 0 ? 24 : hour;
+			date.setHours(hour);
+			date.setMinutes(time.split(":")[1]);
+			date.setSeconds(0);
+			arr[i] = date;
+		}
+
+		let i = arr.length - 1;
+		while (i >= 0 && arr[i] > key) {
+			arr[i + 1] = arr[i];
+			i -= 1;
+		}
+		arr[i + 1] = key;
+	} catch (error) {
+		console.error(`insertDateSorted error: ${error}`);
+	}
+}
+
+function updatePrayerNames(obj, arr) {
+	try {
+		let currentPrayerTime = arr[arr.indexOf(obj) - 1];
+		let nextPrayerTime = arr[arr.indexOf(obj) + 1];
+
+		$("#first-prayer").text(getKeyByValue(obj, currentPrayerTime));
+		$("#second-prayer").text(getKeyByValue(obj, nextPrayerTime));
+
+		function getKeyByValue(object, value) {
+			return Object.keys(object).find((key) => object[key] === value);
+		}
+	} catch (error) {
+		console.error(`updatePrayerNames error: ${error}`);
 	}
 }
 
@@ -211,6 +283,7 @@ function checkIfMonthFileExists() {
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
+	// console.log = function () {};
 	system_month = new Date().getMonth() + 1;
 	navigator.geolocation.getCurrentPosition(onSuccess, onError);
 }
@@ -222,9 +295,6 @@ function onSuccess(position) {
 	// Get postion data and store in geodata
 	geodata.latitude = position.coords.latitude;
 	geodata.longitude = position.coords.longitude;
-
-	// console.log(`Latitude: ${geodata.latitude}; Longitude: ${geodata.longitude}`);
-	// console.log = function () {};
 
 	// checkIfSalahFileExists
 	checkIfSalahFileExists();
