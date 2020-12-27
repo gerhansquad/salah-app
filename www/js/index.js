@@ -240,10 +240,10 @@ function readFile(fname) {
 // ------------------------------------------------------------------------------------------------------------
 function reqAPI() {
 	const AdhanAPIParams = {
-		// latitude: `${geodata.latitude}`, //"25.2048" Manual Dubai geoData.
-		// longitude: `${geodata.longitude}`, //"55.2708" Manual Dubai geoData.
-		latitude: 25.2048,
-		longitude: 55.2708,
+		// latitude: `${geodata.latitude}`,
+		// longitude: `${geodata.longitude}`,
+		latitude: 25.2048, // dubai geodata
+		longitude: 55.2708, // dubai geodata
 		method: "2",
 	};
 	// this is a new month OR no prayer info saved prior
