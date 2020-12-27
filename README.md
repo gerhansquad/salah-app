@@ -23,13 +23,10 @@ development. **Important: You need to have the Android SDK installed beforehand.
 Run this once at the beginning to install the development tools for iOS
 development. **Important: You need to have the iOS SDK installed beforehand, which is currently only possible on macOS.**
 
-**Optional**
+**To run the application**
 
-`cordova build android`
-Run this to build the Android app
+`npm run emulate`
+Run this to rebundle the projct, as well as rebuild and redeploy the Android app on a running emulator.
 
-`cordova run android`
-Run this to build and deploy the app on an Android device or emulator
-
-`cordova emulate android`
-Run this to build the Android app, as well as install and deploy it on an Android emulator. If a device is connected it will be used, unless an eligible emulator is already running.
+`npm run device`
+Run this to rebundle the projct, as well as rebuild and redeploy the Android app on a connected Android device.
