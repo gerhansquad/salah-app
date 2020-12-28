@@ -1,8 +1,10 @@
 const path = require("path");
 module.exports = {
-	entry: "./www/js/index.js",
+	mode: "development",
+	devtool: false,
+	entry: "./app.js",
 	output: {
-		filename: "build.js",
-		path: path.resolve(__dirname, "www", "js", "dist"),
+		filename: "index.js",
+		path: path.resolve(__dirname, "www", "js"),
 	},
 };

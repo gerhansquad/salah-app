@@ -12,7 +12,7 @@
 		"ecosystem:cordova"
 	],
 	"author": "Gerhansquad",
-	"license": "Apache-2.0",
+	"license": "MIT",
 	"devDependencies": {
 		"cordova-android": "^9.0.0",
 		"cordova-browser": "^6.0.0",
