@@ -124,6 +124,7 @@ body {
 	justify-content: center;
 	height: 10vh;
 	align-content: center;
+	position: relative;
 }
 
 .row3col1,
@@ -211,8 +212,21 @@ body {
 	padding: 0%;
 	padding-inline: 0% 0%;
 	text-align: center;
-	color: aliceblue;
+	color: #f0f8ff;
 	font-size: 3.25vmin;
+}
+
+/* Prayer Rakaʿah count */
+.pray-num {
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	text-align: left;
+	position: static;
+	left: 10px;
+	top: 7px;
+	color: #f0f8ff;
+	position: absolute;
+	font-weight: 500;
+	font-size: 3.5vmin;
 }
 
 /******************************************************************************************************/
