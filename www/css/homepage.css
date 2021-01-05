@@ -96,7 +96,6 @@ body {
 #time-left,
 #second-prayer {
 	margin: 0;
-	/* border: black solid 1px; */
 }
 
 #first-prayer {
@@ -183,6 +182,16 @@ body {
 	align-content: center;
 }
 
+.prayer-container {
+	display: flex;
+	padding: 0%;
+	margin: 0%;
+	height: 50%;
+	width: auto;
+	position: relative;
+	justify-content: center;
+}
+
 /******************************************************************************************************/
 /*										Slider Open state: Text and Icons							  */
 /******************************************************************************************************/
@@ -200,10 +209,23 @@ body {
 
 /*  Mandatory Icons */
 .mandatory-icon {
+	height: 100%;
 	width: auto;
-	height: 45%;
 	filter: invert(100%);
-	/* border: solid black 1px; */
+}
+
+/* Prayer Rakaʿah count */
+.pray-num {
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	color: #f0f8ff;
+	font-weight: 500;
+	font-size: 1.8vh;
+	line-height: 0.8;
+	padding: 0%;
+	margin: 0%;
+	position: absolute;
+	left: 0%;
+	bottom: 75%;
 }
 
 .prayer-types {
@@ -214,19 +236,6 @@ body {
 	text-align: center;
 	color: #f0f8ff;
 	font-size: 3.25vmin;
-}
-
-/* Prayer Rakaʿah count */
-.pray-num {
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-	text-align: left;
-	position: static;
-	left: 10px;
-	top: 7px;
-	color: #f0f8ff;
-	position: absolute;
-	font-weight: 500;
-	font-size: 3.5vmin;
 }
 
 /******************************************************************************************************/
