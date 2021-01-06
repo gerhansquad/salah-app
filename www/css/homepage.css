@@ -19,7 +19,10 @@ body {
 }
 
 .myrow1 {
+	display: flex;
+	align-items: center;
 	height: 30vh;
+	/* border: solid 2px black; */
 }
 
 .myrow2 {
@@ -27,7 +30,9 @@ body {
 	justify-content: center;
 	padding-left: 10%;
 	padding-right: 10%;
+	/* border: solid 2px black; */
 }
+
 .myrow3 {
 	height: 41vh;
 }
@@ -40,11 +45,88 @@ body {
 .row1col2,
 .row1col3,
 .row1col4 {
-	position: relative;
-	top: 25%;
 	min-width: 5%;
-	height: fit-content;
+	height: 50%;
 	/* border: solid white 1px; */
+	padding-inline: 4.5%;
+}
+
+.nafl-name-row {
+	display: flex;
+	align-items: center;
+	height: 5vh;
+	/* border: solid 2px blue; */
+}
+
+.nafl-container {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0;
+	padding-inline: 0%;
+	height: 7vh;
+	width: auto;
+	/* max-width: 50%; */
+	/* border: solid 2px blue; */
+}
+
+/******************************************************************************************************/
+/*										Nafl Prayers: Content									 	  */
+/******************************************************************************************************/
+
+.nafl-name {
+	font-family: "Source Sans Pro", sans-serif;
+	color: white;
+	font-size: 4vmin;
+	padding-inline: 0% 0%;
+	/* margin: 0%; */
+	line-height: 0.8;
+	text-align: center;
+	/* border: solid 1px rgb(226, 202, 62); */
+}
+
+.nafl-icon {
+	/* border: solid 1px cyan; */
+	height: 80%;
+	width: 100%;
+	filter: invert(100%);
+	padding-inline: 15%;
+}
+
+.nafl-num {
+	font-size: 2vh;
+	position: absolute;
+	left: 12%;
+	bottom: 65%;
+	color: white;
+	/* border: solid 1px gold; */
+}
+
+.nafl-plus {
+	left: 0%;
+}
+
+.nafl-minus {
+	right: 0%;
+}
+
+.nafl-plus,
+.nafl-minus {
+	position: absolute;
+	text-align: center;
+	font-size: 5vw;
+	color: white;
+	line-height: 0.8;
+	margin: 0%;
+	min-width: 15%;
+	border: solid 1px gold;
+}
+
+/*Testing*/
+.nafl-plus:hover,
+.nafl-minus:hover {
+	color: green;
 }
 
 /******************************************************************************************************/
@@ -66,15 +148,18 @@ body {
 	justify-content: center;
 	height: 44%;
 }
+
 .first-prayer-row {
 	text-transform: uppercase;
 	height: 12.5%;
 	padding-top: 0.8vh;
 }
+
 .time-left-row {
 	height: 33%;
 	justify-content: center;
 }
+
 .second-prayer-row {
 	align-items: flex-start;
 	/* text-transform: uppercase; */
@@ -103,6 +188,7 @@ body {
 	line-height: 0.75;
 	padding: 0px;
 }
+
 #time-left {
 	font-size: 9.5vh;
 	line-height: 0.75;
@@ -124,6 +210,7 @@ body {
 	height: 10vh;
 	align-content: center;
 	position: relative;
+	/* border: solid 1px red; */
 }
 
 .row3col1,
@@ -190,6 +277,7 @@ body {
 	width: auto;
 	position: relative;
 	justify-content: center;
+	/* border: solid 1px white; */
 }
 
 /******************************************************************************************************/
@@ -212,6 +300,7 @@ body {
 	height: 100%;
 	width: auto;
 	filter: invert(100%);
+	/* border: solid 2px gold; */
 }
 
 /* Prayer Rakaʿah count */
@@ -257,6 +346,6 @@ body {
 .row3col4:hover,
 .row3col5:hover {
 	animation: 0.5s slide-up;
-	border-top: solid aliceblue 0px;
+	/* border-top: solid aliceblue 0px; */
 	top: 8.5%;
 }
