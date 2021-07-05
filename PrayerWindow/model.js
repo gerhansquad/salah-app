@@ -22,71 +22,94 @@ export function initPrayerModel() {
 	}
 
 	// checkIfSalahFileExists
-	checkIfSalahFileExists();
+	const salahFileExists = checkIfSalahFileExists();
 
+	salahFileExists ? readFile("saved-month.json") : fileDoesNotExistHandler()
+	
+	function fileDoesNotExistHandler() {
+		console.log("salah file doesn't exist, make api call, calling reqAPI()");
+		reqAPI(); //If salah file doesn't exist, make API req
+	}
 	// Done with all checks, proceed to display part
 }
 
-function checkIfSalahFileExists() {
+const checkIfSalahFileExists = () => {
+	let exists = false;
 	window.requestFileSystem(
 		LocalFileSystem.PERSISTENT,
 		0,
 		function (fileSystem) {
-			fileSystem.root.getFile("salah-times.json", { create: false }, fileExists, fileDoesNotExist);
+			fileSystem.root.getFile("salah-times.json", { create: false }, fileExists);
 		},
 		getFSFail
 	);
 
-	function fileExists(fileEntry) {
-		// console.log("File " + fileEntry.fullPath + " exists!");
-		readFile("saved-month.json");
-	}
-	function fileDoesNotExist() {
-		console.log("salah file doesn't exist, make api call, calling reqAPI()");
-		reqAPI(); //If salah file doesn't exist, make API req
-	}
 	function getFSFail(evt) {
 		console.log(evt.target.error.code);
 	}
+
+	function fileExists(fileEntry) {
+		exists = true;
+	}
+
+	return exists
 }
 
 // This function checks for the change in timezone or month and calls reqAPI()
 function readFile(fname) {
+
 	window.requestFileSystem(
 		LocalFileSystem.PERSISTENT,
 		0,
-		function (fs) {
-			fs.root.getFile(fname, { create: false, exclusive: false }, function (fileEntry) {
-				fileEntry.file(
-					function (file) {
-						var reader = new FileReader();
-						reader.onloadend = function () {
-							console.log("Successful file read: " + this.result);
-							let data = JSON.parse(this.result);
-							if (fname.localeCompare("saved-month.json") == 0) {
-								console.log("Reading saved-month.json");
-								if (system_month != data.month) {
-									reqAPI(); // if this is called, then the timezone will be automatically updated
-								}
-							} else {
-								console.log("Reading salah-times.json");
-								if (timezone != data.data[0].meta.timezone) {
-									reqAPI(); // if this is called, then the month will be automatically updated
-								}
-							}
-						};
-						reader.readAsText(file);
-					},
-					function (error) {
-						throw error;
-					}
-				);
-			});
-		},
-		function (error) {
+		onSuccessLoadFs,
+		onErrorLoadFs
+	);
+
+	function onErrorLoadFs(error) {
+		throw error;
+	}
+
+	function onSuccessLoadFs(fs) {
+
+		fs.root.getFile(fname, { create: false, exclusive: false }, onSuccessCreateFileObject, onErrorCreateFileObject);
+
+		function onErrorCreateFileObject(error) {
 			throw error;
 		}
-	);
+
+		function onSuccessCreateFileObject(fileObjectEntry) {
+
+			fileObjectEntry.file(
+				onSuccessReadFile,
+				onErrorReadFile
+			);
+
+			function onErrorReadFile(error) {
+				throw error;
+			}
+
+			function onSuccessReadFile(file) {
+				// this is async
+				var reader = new FileReader();
+				reader.onloadend = function () {
+					console.log("Successful file read: " + this.result);
+					let data = JSON.parse(this.result);
+					if (fname.localeCompare("saved-month.json") == 0) {
+						console.log("Reading saved-month.json");
+						if (system_month != data.month) {
+							reqAPI(); // if this is called, then the timezone will be automatically updated
+						}
+					} else {
+						console.log("Reading salah-times.json");
+						if (timezone != data.data[0].meta.timezone) {
+							reqAPI(); // if this is called, then the month will be automatically updated
+						}
+					}
+				};
+				reader.readAsText(file);
+			}
+		}
+	}
 }
 
 function reqAPI() {

@@ -1,5 +1,4 @@
 import { makeTimestamp } from "./processing"
-
 export function startUpdating(currentTimestamp, currentDayPrayerData, arr) {
 	setInterval(function () {
 		let timer = new Date()
