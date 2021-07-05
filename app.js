@@ -8,6 +8,7 @@ document.addEventListener(
 		initPrayerModel()
 		// update the frontend after a delay to let I/O complete
 		setTimeout(initPrayerView, 50)
+		// initPrayerView()
 	},
 	false
-)
+);

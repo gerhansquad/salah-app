@@ -19,13 +19,13 @@ export function initPrayerView() {
 						reader.readAsText(file)
 					},
 					function (error) {
-						throw error
+						console.log("File does not exist")
 					}
 				)
 			})
 		},
 		function (error) {
-			throw error
+			console.log("File request failed")
 		}
 	)
 }
@@ -75,7 +75,7 @@ function insertDateSorted(arr, key) {
 		}
 		arr[i + 1] = key
 	} catch (error) {
-		console.error(`insertDateSorted error: ${error}`)
+		console.log(`insertDateSorted error: ${error}`)
 	}
 }
 
