@@ -1,4 +1,4 @@
-import { makeTimestamp } from "./processing"
+import { makeTimestamp, getKeyByValue } from "../utils/utility";
 export function startUpdating(currentTimestamp, currentDayPrayerData, arr) {
 	setInterval(function () {
 		let timer = new Date()
@@ -39,8 +39,4 @@ export function startUpdating(currentTimestamp, currentDayPrayerData, arr) {
 		// Displaying the time left
 		$("#time-left").text(`${hoursDifference}h${minutesDifference}m`)
 	}, 1000)
-
-	function getKeyByValue(object, value) {
-		return Object.keys(object).find((key) => object[key] == `${value}`)
-	}
 }

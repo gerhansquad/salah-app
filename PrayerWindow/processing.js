@@ -1,5 +1,5 @@
 import { startUpdating } from "./view"
-import { makeTimestamp as timeStamp } from "./processing"
+import { makeTimestamp, genericErrorHandler } from "../utils/utility"
 
 export function initPrayerView() {
 	let fname = "salah-times.json"
@@ -19,13 +19,13 @@ export function initPrayerView() {
 						reader.readAsText(file)
 					},
 					function (error) {
-						console.log("File does not exist")
+						genericErrorHandler(error)
 					}
 				)
 			})
 		},
 		function (error) {
-			console.log("File request failed")
+			genericErrorHandler(error)
 		}
 	)
 }
@@ -65,7 +65,7 @@ function insertDateSorted(arr, key) {
 	try {
 		for (let i = 0; i < arr.length; i++) {
 			let time = arr[i].match("[0-9][0-9]:[0-9][0-9]")[0]
-			arr[i] = timeStamp(time)
+			arr[i] = makeTimestamp(time)
 		}
 
 		let i = arr.length - 1
@@ -75,16 +75,6 @@ function insertDateSorted(arr, key) {
 		}
 		arr[i + 1] = key
 	} catch (error) {
-		console.log(`insertDateSorted error: ${error}`)
+		genericErrorHandler(error)
 	}
-}
-
-export function makeTimestamp(time) {
-	let date = new Date()
-	let hour = time.split(":")[0]
-	hour = hour == 0 ? 24 : hour
-	date.setHours(hour)
-	date.setMinutes(time.split(":")[1])
-	date.setSeconds(0)
-	return date
 }

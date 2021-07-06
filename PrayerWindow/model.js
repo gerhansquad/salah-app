@@ -1,118 +1,139 @@
-let system_month;
-let timezone;
-let geodata = {};
+import { genericErrorHandler } from "../utils/utility";
+
+let system_month
+let timezone
+let geodata = {}
 
 export function initPrayerModel() {
-	// console.log = function () {};
-	system_month = new Date().getMonth() + 1;
-	timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+	system_month = new Date().getMonth() + 1
+	timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 	navigator.geolocation.getCurrentPosition(onSuccess, onError);
 
-	// onSuccess Callback
-	// This method accepts a Position object, which contains the
-	// current GPS coordinates
+	// onSuccess callback accepts a Position object, which contains the current GPS coordinates
 	function onSuccess(position) {
 		// Get postion data and store in geodata
-		geodata.latitude = position.coords.latitude;
-		geodata.longitude = position.coords.longitude;
+		geodata.latitude = position.coords.latitude
+		geodata.longitude = position.coords.longitude
 	}
+
 	// onError Callback receives a PositionError object
 	function onError(error) {
-		console.log(error.message);
+		genericErrorHandler(error);
 	}
 
-	// checkIfSalahFileExists
-	const salahFileExists = checkIfSalahFileExists();
-
-	salahFileExists ? readFile("saved-month.json") : fileDoesNotExistHandler()
+	const filename = "salah-times.json"
+	const salahFile = getFile(filename);
+	const salahData = null
 	
-	function fileDoesNotExistHandler() {
-		console.log("salah file doesn't exist, make api call, calling reqAPI()");
-		reqAPI(); //If salah file doesn't exist, make API req
+	salahFile == null ?
+		genericErrorHandler(`Error occurred while creating File object for ${filename}`)
+	: salahData = getFileContent(salahFile);
+
+	salahData == null || salahData == "" ?
+		emptySalahFileHandler()
+	: (
+		timezone != salahData.data[0].meta.timezone ? 
+			newTimezoneHandler()
+		: null
+	)
+
+	function emptySalahFileHandler() {
+
+		// If this is logged before the succesful file read log, then there is async issues
+		genericErrorHandler("The file 'salah-times.json' is empty --- Updating 'salah-times.json'...");
+		updateSalahData();
 	}
+
+	function newTimezoneHandler(){
+		genericErrorHandler("The current timezone is different from the saved timezone --- Updating 'salah-times.json'...");
+		updateSalahData()
+	}
+
+	// console.log("Reading saved-month.json");
+	// if (system_month != data.month) {
+	// 	updateSalahData(); // if this is called, then the timezone will be automatically updated
+	// }
+
 	// Done with all checks, proceed to display part
 }
 
-const checkIfSalahFileExists = () => {
-	let exists = false;
-	window.requestFileSystem(
-		LocalFileSystem.PERSISTENT,
-		0,
-		function (fileSystem) {
-			fileSystem.root.getFile("salah-times.json", { create: false }, fileExists);
-		},
-		getFSFail
-	);
+/**
+ * Get the File object for the filename passed in
+ * @param {String} filename name of the file on the filesystem for which a File object will be returned
+ * @returns File object for the corresponding filename. The corresponding file on the filesystem may be populated or empty. Returns null on error.
+ */
+function getFile(filename) {
+	let file = null;
 
-	function getFSFail(evt) {
-		console.log(evt.target.error.code);
+	// Creates a FileSystem object representing the file system the app has permission to use
+	window.requestFileSystem(LocalFileSystem.PERSISTENT,0,getFsSuccessHandler,getFsErrorHandler);
+
+	function getFsErrorHandler(evt) {
+		genericErrorHandler(evt.target.error.code);
 	}
 
-	function fileExists(fileEntry) {
-		exists = true;
-	}
+	// Receives a FileSystem object 
+	function getFsSuccessHandler(fileSystem) {
 
-	return exists
-}
+		// Creates a FileEntry object representing a file on a file system.
+		fileSystem.root.getFile(filename, { create: true }, getFileEntrySuccessHandler, getFileEntryErrorHandler);
 
-// This function checks for the change in timezone or month and calls reqAPI()
-function readFile(fname) {
-
-	window.requestFileSystem(
-		LocalFileSystem.PERSISTENT,
-		0,
-		onSuccessLoadFs,
-		onErrorLoadFs
-	);
-
-	function onErrorLoadFs(error) {
-		throw error;
-	}
-
-	function onSuccessLoadFs(fs) {
-
-		fs.root.getFile(fname, { create: false, exclusive: false }, onSuccessCreateFileObject, onErrorCreateFileObject);
-
-		function onErrorCreateFileObject(error) {
-			throw error;
+		function getFileEntryErrorHandler(error) {
+			genericErrorHandler(error)
 		}
 
-		function onSuccessCreateFileObject(fileObjectEntry) {
+		// Receives a FileEntry object
+		function getFileEntrySuccessHandler(fileEntry) {
 
-			fileObjectEntry.file(
-				onSuccessReadFile,
-				onErrorReadFile
-			);
+			/**
+			 * - Creates a File object (not an actual file on the fs) containing file properties. 
+			 * - Allows JavaScript to access the file content.
+			 * - Represents the current state of the file that the FileEntry represents.
+			 */
+			fileEntry.file(createFileSuccessHandler, createFileErrorHandler);
 
-			function onErrorReadFile(error) {
-				throw error;
+			function createFileErrorHandler(error) {
+				genericErrorHandler(error.code);
 			}
 
-			function onSuccessReadFile(file) {
-				// this is async
-				var reader = new FileReader();
-				reader.onloadend = function () {
-					console.log("Successful file read: " + this.result);
-					let data = JSON.parse(this.result);
-					if (fname.localeCompare("saved-month.json") == 0) {
-						console.log("Reading saved-month.json");
-						if (system_month != data.month) {
-							reqAPI(); // if this is called, then the timezone will be automatically updated
-						}
-					} else {
-						console.log("Reading salah-times.json");
-						if (timezone != data.data[0].meta.timezone) {
-							reqAPI(); // if this is called, then the month will be automatically updated
-						}
-					}
-				};
-				reader.readAsText(file);
+			// Receives a File object
+			function createFileSuccessHandler(file) {
+				file = file
 			}
+
 		}
 	}
+
+	return file
 }
 
-function reqAPI() {
+function getFileContent(file) {
+
+	let data = null;
+
+	// create a FileReader object
+	var reader = new FileReader();
+
+	// asynchronously load file data into memory
+	console.log(`Starting file read...\n`);
+	reader.readAsText(file);
+
+	// set handler for "done loading file data into memory" event
+	reader.onloadend = function (event) {
+		console.log(`SUCCESSFUL FILE READ:\n${reader.result}\n`);
+		data = JSON.parse(reader.result);
+	}
+
+	// set handler for a file reading error event
+	reader.onerror = function(error) {
+		genericErrorHandler(error)
+	}
+
+	return data
+}
+
+function updateSalahData() {
 	const AdhanAPIParams = {
 		// latitude: `${geodata.latitude}`,
 		// longitude: `${geodata.longitude}`,
@@ -140,8 +161,8 @@ function createwriteFile(data, fname) {
 		LocalFileSystem.PERSISTENT,
 		100000,
 		function (fs) {
-			fs.root.getFile(fname, { create: true, exclusive: false }, function (fileEntry) {
-				fileEntry.createWriter(function (fileWriter) {
+			fs.root.getFile(fname, { create: true, exclusive: false }, function (fileObj) {
+				fileObj.createWriter(function (fileWriter) {
 					fileWriter.onwriteend = function () {
 						console.log("Successful file write...");
 					};
