@@ -1,5 +1,7 @@
 import { startUpdating } from "./view"
 import { makeTimestamp, genericErrorHandler } from "../utils/utility"
+let val = null;
+
 
 export function initPrayerView() {
 	let fname = "salah-times.json"
@@ -10,6 +12,9 @@ export function initPrayerView() {
 			fs.root.getFile(fname, { create: false, exclusive: false }, function (fileEntry) {
 				fileEntry.file(
 					function (file) {
+						val = true;
+						console.log(`VALUE FROM INSIDE CALLBACK : ${val}`);
+
 						var reader = new FileReader()
 						reader.onloadend = function () {
 							console.log("Successful file read: " + this.result)
@@ -28,6 +33,7 @@ export function initPrayerView() {
 			genericErrorHandler(error)
 		}
 	)
+	setTimeout(() => console.log(`VALUE FROM OUTSIDE CALLBACK IS ${val}`),5000);
 }
 
 export function processData(data) {
