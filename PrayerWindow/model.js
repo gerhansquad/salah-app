@@ -38,10 +38,7 @@ export function loadPrayerData() {
 			} else {
 				// read saved-month.json
 				onGetFileContent(fileEntries[1], (month_data) => {
-					// salah_data.data.forEach(obj => {
-					// 	console.log(JSON.stringify(obj, null, 4))
-					// })
-					console.log("SALAH DATA 2: "+ salah_data);
+					console.log("SALAH DATA 2: "+ JSON.stringify(salah_data.data[0].meta.timezone));
 					if (month_data.month != system_month || timezone != salah_data.data[0].meta.timezone) {
 						console.log("UPDATE FILES 2");
 						updateFiles(fileEntries);
@@ -151,7 +148,7 @@ export function loadPrayerData() {
 				// console.log("Trimmed: " + reader.result.trim());
 				// console.log("Un-trimmed: " + reader.result);
 				if (reader.result.trim() == "") cb(reader.result); // result = ""
-				else cb(JSON.parse(reader.result)) // result = "{bla bla bla}"
+				else cb((JSON.parse(reader.result))) // result = "{bla bla bla}"
 			}
 		
 			// set handler for a file reading error event
@@ -178,7 +175,7 @@ export function loadPrayerData() {
 			AdhanAPIParams,
 			{ Authorization: "OAuth2: token" },
 			function (response) {
-				writeToFile(fileEntries[0], response);
+				writeToFile(fileEntries[0], response.data);
 				writeToFile(fileEntries[1], { month: system_month } );
 				// createwriteFiles(response.data);
 			},
