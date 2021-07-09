@@ -5,10 +5,11 @@ document.addEventListener(
 	"deviceready",
 	function () {
 		// update the file system
-		loadPrayerData();
+		let file = null
+		loadPrayerData().then((f) => {file = f});
 		// update the frontend after a delay to let I/O complete
 		// setTimeout(initPrayerView,500);
-		// initPrayerView()
+		initPrayerView(file)
 	},
 	false
 );
