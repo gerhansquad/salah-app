@@ -1,15 +1,28 @@
 import { loadPrayerData } from "./PrayerWindow/model"
-import { initPrayerView } from "./PrayerWindow/processing"
+import { updatePrayerView } from "./PrayerWindow/processing"
 
 document.addEventListener(
 	"deviceready",
 	function () {
-		// update the file system
-		let file = null
-		loadPrayerData().then((f) => {file = f});
-		// update the frontend after a delay to let I/O complete
-		// setTimeout(initPrayerView,500);
-		initPrayerView(file)
+
+		let salahObj = null
+		let monthObj = null
+
+		// setInterval(() => {
+		// 	console.log('BOOM 5 SECONDS')
+		// }, 5000);
+
+		loadPrayerData().then(({salah,month}) => {
+			salahObj = salah
+			monthObj = month
+		});
+
+		
+		// setInterval(() => {
+		// 	console.log(JSON.stringify(salahObj,null,4),JSON.stringify(monthObj,null,4))
+		// 	// if (salahObj.data) updatePrayerView(salahObj.data); return
+		// 	// updatePrayerView(null)
+		// },10000)
 	},
 	false
 );

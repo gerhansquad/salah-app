@@ -1,65 +1,80 @@
 import { genericErrorHandler } from "../utils/utility";
 
-let system_month
-let timezone
-let geodata = {}
+let system_month = new Date().getMonth() + 1
+let month_data;
+let salah_data;
+let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export async function loadPrayerData() {
 
-	system_month = new Date().getMonth() + 1
-	timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-
-	// this doesnt work on emulator for some reason
-	// navigator.geolocation.getCurrentPosition(onSuccess, onError);
-	
-	// onSuccess callback accepts a Position object, which contains the current GPS coordinates
-	// function onSuccess(position) {
-	// 	// Get postion data and store in geodata
-	// 	geodata.latitude = position.coords.latitudes
-	// 	geodata.longitude = position.coords.longitude
-	// 	console.log(`ONSUCCESS GETCURRENTPOSITION: ${position.coords.latitude}, ${position.coords.longitude}`);
-	// }
-
-	// onError Callback receives a PositionError object
-	// function onError(error) {
-	// 	genericErrorHandler(`GEOLOCATION ERROR: ${error}`);
-	// }
+export async function loadPrayerData() {	
 
 	let fileEntries = await getFileEntries()
 	console.log("FILE ENTRIES RECEIVED: "+ JSON.stringify(fileEntries, null, 4));
 	
 	// swap
 	if(fileEntries[0].name == "saved-month.json") [fileEntries[0], fileEntries[1]] = [fileEntries[1], fileEntries[0]];
-	
-	// read salah-times.json
-	let salah_data = await onGetFileContent(fileEntries[0])
-	console.log("SALAH DATA: "+ JSON.stringify(salah_data, null, 4));
-	
-	// both files are going to be updated if either file is empty or outdated
-	if (salah_data == null || salah_data == "") {
-		console.log("UPDATE SALAH FILE");
-		updateFiles(fileEntries);
-	} else {
-		// read saved-month.json
-		let month_data = await getFileContent(fileEntries[1])
-		console.log("MONTH DATA: "+ JSON.stringify(month_data, null, 4));
+	const salahFileEntry = fileEntries[0]
+	const monthFileEntry = fileEntries[1]
 
+	// read salah-times.json from disk
+	salah_data = await getFileContent(salahFileEntry);
+	console.log("SALAH FILE DATA: "+ JSON.stringify(salah_data, null, 4));
+
+	async function update() {
+		system_month = new Date().getMonth() + 1
 		if (month_data.month != system_month || timezone != salah_data.data[0].meta.timezone) {
-			console.log("UPDATE MONTH FILE");
-			updateFiles(fileEntries);
+			console.log("month/timezone change detected\n");
+			await updateFiles(fileEntries);
 		} else {
 			console.log("NO FILES UPDATED");
-		} 
+		} 	
+		console.log("CACHED VARS: "+{system_month},{timezone},{fileEntries},{salah_data},{month_data});
+		setTimeout(update, 5000);
 	}
 
-	return [
-		{
-			fname: "",
-			file: fileEntries[0],
-			data: ""
+	// both files are going to be updated if either file is empty or outdated
+	if (salah_data == null || salah_data == "") {
+		console.log("Both files EMPTY\n");
+		await updateFiles(fileEntries);
+		// TODO: Make app constantly check for new month and timezone when app opens up with no files
+		// await update();
+	} else {
+		console.log("Both files EXIST\n");
+		// read saved-month.json
+		month_data = await getFileContent(monthFileEntry)
+		console.log("MONTH FILE DATA: "+ JSON.stringify(month_data, null, 4));
+		await update();
+	}
+
+	return {
+		salah: {
+			filename: "salah-times.json",
+			file: salahFileEntry,
+			data: salah_data
 		},
-		{}
-	]
+		month: {
+			filename: "saved-month.json",
+			file: monthFileEntry,
+			data: month_data // data: system_month
+		}
+	}
+}
+
+async function updateFiles(fileEntries){
+	console.log("UPDATING SALAH AND MONTH FILES AND GLOBAL VARS:\n");
+	console.log(JSON.stringify(fileEntries, null, 4));
+
+	salah_data = await getApiData();
+	month_data = system_month;
+	console.log("JUST RECEIVED API DATA: "+JSON.stringify([salah_data,month_data], null, 4));
+	
+	try {
+		writeToFile(fileEntries[0], salah_data);
+		writeToFile(fileEntries[1], { month: month_data });
+	} catch (error) {
+		console.error("ERROR WHILE WRITING TO FILE");
+		genericErrorHandler(error);
+	}
 }
 
 async function getFileEntries() {    
@@ -68,7 +83,8 @@ async function getFileEntries() {
 
 	try {
 		fileEntries = await getFilePromise()
-		console.log("FILE ENTRIES RIGHT HERE: " + fileEntries)
+		console.log("GOT FILE ENTRIES: " + fileEntries)
+		return fileEntries;
 	} catch (error) {
 		genericErrorHandler(error);
 	}
@@ -106,9 +122,6 @@ async function getFileEntries() {
 				}
 		});
 	}
-
-	return fileEntries
-
 }
 
 async function getFileContent(fileEntry) {
@@ -119,6 +132,7 @@ async function getFileContent(fileEntry) {
 
 	try {
 		data = await getFileDataPromise()
+		return data;
 	} catch (error) {
 		genericErrorHandler(error)
 	}
@@ -160,38 +174,74 @@ async function getFileContent(fileEntry) {
 		})
 	}
 
-	return data
 }
 
-function updateFiles(fileEntries) {
+async function getApiData() {
+	let data = null;
+	console.log("GETTING API DATA");
 
-	console.log("FILE ENTRIES GONNA UPDATE: "+ JSON.stringify(fileEntries, null, 4));
+	function locationReqPromise(){
+		return new Promise((res,rej) => {
+			let geodata = {};
+			navigator.geolocation.getCurrentPosition(onSuccess, onError);
+			
+			// onSuccess callback accepts a Position object, which contains the current GPS coordinates
+			function onSuccess(position) {
+				// Get postion data and store in geodata
+				geodata.latitude = position.coords.latitudes
+				geodata.longitude = position.coords.longitude
+				console.log(`ONSUCCESS GET CURRENT POSITION: ${position.coords.latitude}, ${position.coords.longitude}`);
+				res(geodata)
+			}
+		
+			// onError Callback receives a PositionError object
+			function onError(error) {
+				rej(`GEOLOCATION ERROR: ${error}`);
+			}
+		})
+	}
+	// this doesnt work on emulator for some reason
 
-	const AdhanAPIParams = {
-		// latitude: `${geodata.latitude}`,
-		// longitude: `${geodata.longitude}`,
-		latitude: "25.2048", // dubai geodata
-		longitude: "55.2708", // dubai geodata
-		method: "2",
-	};
+	try {
+		// let geodata = await locationReqPromise()
+		// console.log("geodata:", geodata)
+		data = await apiReqPromise()
+	} catch (error) {
+		console.error('ERROR WHILE GETTING API DATA');
+		genericErrorHandler(error)
+		data = await apiReqPromise(null)
+	}
 
-	cordova.plugin.http.get(
-		"https://api.aladhan.com/v1/calendar",
-		AdhanAPIParams,
-		{ Authorization: "OAuth2: token" },
-		function (response) {
-			writeToFile(fileEntries[0], response.data);
-			writeToFile(fileEntries[1], { month: system_month } );
-			// createwriteFiles(response.data);
-		},
-		function (response) {
-			genericErrorHandler(`API CALL ERROR: ${response.error}`) 
-		}
-	);
+	return data
+
+	function apiReqPromise(){
+		return new Promise((res, rej) => {
+		
+			const AdhanAPIParams = {
+				// latitude: geodata ? `${geodata.latitude}` : "25.2048",
+				// longitude: geodata ? `${geodata.longitude}` : "55.2708",
+				latitude: "25.2048", // dubai geodata
+				longitude: "55.2708", // dubai geodata
+				method: "2",
+			};
+		
+			cordova.plugin.http.get(
+				"https://api.aladhan.com/v1/calendar",
+				AdhanAPIParams,
+				{ Authorization: "OAuth2: token" },
+				function (response) {
+					res(response.data);
+				},
+				function (response) {
+					rej(`API CALL ERROR: ${response.error}`);
+				}
+			);
+	})};
 }
 
 function writeToFile(fileEntry, data) {
-	fileEntry.createWriter(function (fileWriter) {
+
+	const createWriterSuccessHandler = fileWriter => {
 		fileWriter.write(data);
 
 		fileWriter.onwriteend = function (event) {
@@ -201,5 +251,12 @@ function writeToFile(fileEntry, data) {
 		fileWriter.onerror = function (e) {
 			genericErrorHandler(`ERROR WHILE WRITING TO ${fileEntry.name}: ${e.toString()}`)
 		};
-	});
+	}
+
+	const createWriterErrorHandler = error => {
+		console.error("CREATE FILE WRITER ERROR")
+		throw error
+	}
+
+	fileEntry.createWriter(createWriterSuccessHandler,createWriterErrorHandler);
 }

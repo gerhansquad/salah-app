@@ -3,7 +3,7 @@ import { makeTimestamp, genericErrorHandler } from "../utils/utility"
 let val = null;
 
 
-export function initPrayerView() {
+export function updatePrayerView() {
 	let fname = "salah-times.json"
 	window.requestFileSystem(
 		LocalFileSystem.PERSISTENT,
