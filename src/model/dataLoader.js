@@ -41,6 +41,8 @@ export default async function loadPrayerData() {
 	 */
 	await (async function () {
 		// TODO: should i not await? does it make a difference?
+		system_month = new Date().getMonth() + 1
+		system_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 		if (
 			system_month != startupMonth || // is the current system month different from when the app booted up?
 			month_data.month != system_month || // is the current system month different from the one stored on disk?
