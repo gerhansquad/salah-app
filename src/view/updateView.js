@@ -1,8 +1,10 @@
 import { makeTimestamp, getKeyByValue } from "../utils/utility";
 import processDate from "./processDate"
-export function updateView(salahObj) {
-	let {currentDate, currentDayPrayerData, currentDayPrayerDataArray } = processDate(salahObj)
-	
+
+export default function updateView(salahObj) {
+	let {currentDate, currentDayPrayerData, currentDayPrayerDataArray} = processDate(salahObj)
+	console.log("GOT TIME DATA");
+
 	let currentHour = currentDate.getHours()
 	let currentMinute = currentDate.getMinutes()
 

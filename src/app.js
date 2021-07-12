@@ -16,13 +16,13 @@ import updateView from "./view/updateView"
 			salahObj = salah
 			monthObj = month
 		});
-
+		
 		// document.getElementById('app-container').innerText = 'lolololols'
 		setInterval(() => {
 			console.log(JSON.stringify(salahObj,null,4),JSON.stringify(monthObj,null,4))
 			// document.getElementById('app-container').innerText = `salah: ${JSON.stringify(salahObj,null,4)}\nmonth: ${JSON.stringify(monthObj,null,4)}`
 			updateView(salahObj)
-		},500)
+		},5000)
 	},
 	false
 );

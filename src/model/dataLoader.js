@@ -1,13 +1,11 @@
 import { genericErrorHandler, promiseHandler } from "../utils/utility"
 
 let startupMonth = new Date().getMonth() + 1
-system_month = startupMonth
+let system_month = startupMonth
 
 let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-system_timezone = startupTimezone
 
-let month_data
-let salah_data
+let month_data, salah_data, system_timezone
 
 export default async function loadPrayerData() {
 	let fileEntries = await getFileEntries()
@@ -27,6 +25,7 @@ export default async function loadPrayerData() {
 		console.log("Both files EMPTY\n")
 		// both files are empty so update both files
 		await updateFilesAndState(fileEntries)
+		// here the call to refresh view will be invoked.
 	} else {
 		console.log("Both files EXIST\n")
 		// both files exist but we havent update month_data from disk yet so do that: optimisation over structure
@@ -39,8 +38,8 @@ export default async function loadPrayerData() {
 	 * If it has, update files and state once again.
 	 * TODO: But are we returning these new values to the view? I dont think so.
 	 */
-	await (async function () {
-		// TODO: should i not await? does it make a difference?
+	async function update () {
+		// TODO: should i not await? nah not needed because the part which is async (updatefilesandstate) is already on await so we should be fine.
 		system_month = new Date().getMonth() + 1
 		system_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 		if (
@@ -51,6 +50,7 @@ export default async function loadPrayerData() {
 		) {
 			console.log("month/timezone change detected\n")
 			await updateFilesAndState(fileEntries)
+			// here the call to refresh view will be invoked.
 		} else {
 			console.log("NO FILES UPDATED")
 		}
@@ -58,8 +58,9 @@ export default async function loadPrayerData() {
 		 * Wait a second after function is done executing before being run again.
 		 * As a result, each function call occurs every 1s + how much ever time it takes to run the function
 		 */
-		setTimeout(arguments.callee, 1000)
-	})()
+		setTimeout(update, 60000)
+	}
+	update();
 
 	return {
 		salah: {
@@ -80,13 +81,13 @@ async function updateFilesAndState(fileEntries) {
 	console.log(JSON.stringify(fileEntries, null, 4))
 
 	salah_data = await getApiData()
-	month_data = system_month
+	month_data = { month: system_month }
 	console.log("JUST RECEIVED API DATA: " + JSON.stringify([salah_data, month_data], null, 4))
 
 	try {
 		// we dont await: optimistic updates
 		writeToFile(fileEntries[0], salah_data)
-		writeToFile(fileEntries[1], { month: month_data })
+		writeToFile(fileEntries[1], month_data)
 	} catch (error) {
 		genericErrorHandler("ERROR WHILE TRYING TO UPDATE FILE\n", error)
 	}
