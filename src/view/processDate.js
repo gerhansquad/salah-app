@@ -1,11 +1,12 @@
 import { makeTimestamp, genericErrorHandler } from "../utils/utility"
 
+
 export default function processDate(salahObj) {
 
-		let currentDate 
-		let currentDayPrayerData 
-		let currentDayPrayerDataArray = []
-		let currentDay
+	let currentDay
+	let currentDate
+	let currentDayPrayerData
+	let currentDayPrayerDataArray = []
 		salahObj ? (() => {
 			const data = salahObj.data
 			console.log("SALAH OBJ DATA SIZE" + data.data.length)
@@ -34,18 +35,20 @@ export default function processDate(salahObj) {
 			for (const waqt in currentDayPrayerData) {
 				currentDayPrayerDataArray.push(currentDayPrayerData[waqt])
 			}
-	
-			 insertDateSorted(currentDayPrayerDataArray, currentDate)
+			console.log("I AM HERE 1");
+			insertDateSorted(currentDayPrayerDataArray, currentDate)
+			console.log("I AM HERE 3");
 			// startUpdating(currentDate, currentDayPrayerData, currentDayPrayerDataArray)
 		})() : null
 
 	
 
-	// console.log("RETURNING: " + JSON.stringify({ currentDate, currentDayPrayerData, currentDayPrayerDataArray }));
+	console.log("RETURNING: " + JSON.stringify({ currentDate, currentDayPrayerData, currentDayPrayerDataArray }));
 	return {currentDate, currentDayPrayerData, currentDayPrayerDataArray}
 }
 // Inserts a date into a sorted list of dates in the right position
 function insertDateSorted(arr, key) {
+	console.log("I AM HERE 2");
 	try {
 		for (let i = 0; i < arr.length; i++) {
 			let time = arr[i].match("[0-9][0-9]:[0-9][0-9]")[0]

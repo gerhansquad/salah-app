@@ -4,6 +4,7 @@ import processDate from "./processDate"
 export default function updateView(salahObj) {
 	let {currentDate, currentDayPrayerData, currentDayPrayerDataArray} = processDate(salahObj)
 	console.log("GOT TIME DATA");
+	console.log(JSON.stringify({currentDate, currentDayPrayerData, currentDayPrayerDataArray}))
 
 	let currentHour = currentDate.getHours()
 	let currentMinute = currentDate.getMinutes()
