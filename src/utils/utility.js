@@ -1,10 +1,10 @@
-export function genericErrorHandler(...errors) {
-	let mainError = errors[errors.length]
-	mainError = errors[errors.length].message ? mainError.message : mainError.code ? mainError.code : mainError
-	errors[errors.length] = mainError
-	const message = errors.join(" ")
-	console.error(`${message}\n`)
-}
+// export function genericErrorHandler(...errors) {
+// 	let mainError = errors[errors.length - 1]
+// 	mainError = mainError.message ? mainError.message : mainError.code ? mainError.code : mainError
+// 	// errors[errors.length] = mainError
+// 	const message = errors.join(" ")
+// 	console.error(`${message}\n`)
+// }
 
 export async function promiseHandler(promise, ...args) {
 	try {

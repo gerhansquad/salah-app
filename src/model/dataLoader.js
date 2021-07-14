@@ -1,4 +1,4 @@
-import { genericErrorHandler, promiseHandler } from "../utils/utility"
+import { promiseHandler } from "../utils/utility"
 
 let startupMonth = new Date().getMonth() + 1
 let system_month = startupMonth
@@ -7,7 +7,7 @@ let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 let month_data, salah_data, system_timezone
 
-export default async function loadPrayerData() {
+export default async function loadPrayerData(state) {
 	let fileEntries = await getFileEntries()
 	console.log("FILE ENTRIES RECEIVED: " + JSON.stringify(fileEntries, null, 4))
 
@@ -24,7 +24,7 @@ export default async function loadPrayerData() {
 	if (salah_data == null || salah_data == "") {
 		console.log("Both files EMPTY\n")
 		// both files are empty so update both files
-		await updateFilesAndState(fileEntries)
+		await updateFilesAndState(fileEntries, state)
 		// here the call to refresh view will be invoked.
 	} else {
 		console.log("Both files EXIST\n")
@@ -33,13 +33,18 @@ export default async function loadPrayerData() {
 		console.log("MONTH FILE DATA: " + JSON.stringify(month_data, null, 4))
 	}
 
+	state.salah.file = salahFileEntry
+	state.salah.data = salah_data
+
+	state.month.file = monthFileEntry
+	state.month.data = month_data
+
 	/**
 	 * Start constantly checking every second if timezone and/or month has changed.
 	 * If it has, update files and state once again.
 	 * TODO: But are we returning these new values to the view? I dont think so.
 	 */
-	async function update () {
-		// TODO: should i not await? nah not needed because the part which is async (updatefilesandstate) is already on await so we should be fine.
+	;(async function updateAgain() {
 		system_month = new Date().getMonth() + 1
 		system_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 		if (
@@ -49,7 +54,7 @@ export default async function loadPrayerData() {
 			system_timezone != salah_data.data[0].meta.timezone // is the current timezone different from the one stored on disk?
 		) {
 			console.log("month/timezone change detected\n")
-			await updateFilesAndState(fileEntries)
+			await updateFilesAndState(fileEntries, state)
 			// here the call to refresh view will be invoked.
 		} else {
 			console.log("NO FILES UPDATED")
@@ -58,38 +63,40 @@ export default async function loadPrayerData() {
 		 * Wait a second after function is done executing before being run again.
 		 * As a result, each function call occurs every 1s + how much ever time it takes to run the function
 		 */
-		setTimeout(update, 60000)
-	}
-	update();
+		setTimeout(updateAgain, 1000)
+	})()
 
-	return {
-		salah: {
-			filename: "salah-times.json",
-			file: salahFileEntry,
-			data: salah_data,
-		},
-		month: {
-			filename: "saved-month.json",
-			file: monthFileEntry,
-			data: month_data, // data: system_month
-		},
-	}
+	// return {
+	// 	salah: {
+	// 		filename: "salah-times.json",
+	// 		file: salahFileEntry,
+	// 		data: salah_data,
+	// 	},
+	// 	month: {
+	// 		filename: "saved-month.json",
+	// 		file: monthFileEntry,
+	// 		data: month_data, // data: system_month
+	// 	},
+	// }
 }
 
-async function updateFilesAndState(fileEntries) {
+async function updateFilesAndState(fileEntries, state) {
 	console.log("UPDATING SALAH AND MONTH FILES AND GLOBAL VARS:\n")
 	console.log(JSON.stringify(fileEntries, null, 4))
 
 	salah_data = await getApiData()
+	console.log("JUST RECEIVED API DATA")
+	state.salah.data = salah_data
+
 	month_data = { month: system_month }
-	console.log("JUST RECEIVED API DATA: " + JSON.stringify([salah_data, month_data], null, 4))
+	state.month.index = system_month
 
 	try {
 		// we dont await: optimistic updates
 		writeToFile(fileEntries[0], salah_data)
 		writeToFile(fileEntries[1], month_data)
 	} catch (error) {
-		genericErrorHandler("ERROR WHILE TRYING TO UPDATE FILE\n", error)
+		console.error("ERROR WHILE TRYING TO UPDATE FILE: ", error)
 	}
 }
 
@@ -97,7 +104,7 @@ async function getFileEntries() {
 	console.log("GETTING FILE ENTRIES")
 
 	const [fileEntries, error] = await promiseHandler(getFilePromise)
-	error ? genericErrorHandler("ERROR WHILE GETTING FILE ENTRIES\n", error) : null
+	error ? console.error("ERROR WHILE GETTING FILE ENTRIES: ", error) : null
 	return fileEntries
 
 	function getFilePromise(...args) {
@@ -136,7 +143,7 @@ async function getFileContent(fileEntry) {
 	console.log("FILE GOING TO BE READ: " + JSON.stringify(fileEntry, null, 4))
 
 	const [data, error] = await promiseHandler(getFileDataPromise)
-	error ? genericErrorHandler("ERROR WHILE READING FILE:\n", error) : null
+	error ? console.error("ERROR WHILE READING FILE: ", error) : null
 	return data
 
 	function getFileDataPromise(...args) {
@@ -207,7 +214,7 @@ async function getApiData() {
 	// let geodata = await locationReqPromise()
 	// console.log("geodata:", geodata)
 	const [data, error] = await promiseHandler(apiReqPromise)
-	error ? genericErrorHandler("ERROR WHILE GETTING API DATA:\n", error) : null
+	error ? console.error("ERROR WHILE GETTING API DATA: ", error) : null
 	// data = await apiReqPromise(null)
 	return data
 

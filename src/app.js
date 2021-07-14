@@ -1,28 +1,26 @@
 import loadPrayerData from "./model/dataLoader"
 import updateView from "./view/updateView"
+import State from "./model/SalahData"
 
-	document.addEventListener(
+document.addEventListener(
 	"deviceready",
 	function () {
-		
-		let salahObj = null
-		let monthObj = null
-		
-		// setInterval(() => {
-		// 	console.log('BOOM 5 SECONDS')
-		// }, 5000);
+		const state = new State()
+		// let salahObj = null
+		// let monthObj = null
 
-		loadPrayerData().then(({salah,month}) => {
-			salahObj = salah
-			monthObj = month
-		});
-		
-		// document.getElementById('app-container').innerText = 'lolololols'
+		// this runs asynchronously
+		loadPrayerData(state)
+
+		// .then(({ salah, month }) => {
+		// 	salahObj = salah
+		// 	monthObj = month
+		// })
+
+		// updating the view every second
 		setInterval(() => {
-			console.log(JSON.stringify(salahObj,null,4),JSON.stringify(monthObj,null,4))
-			// document.getElementById('app-container').innerText = `salah: ${JSON.stringify(salahObj,null,4)}\nmonth: ${JSON.stringify(monthObj,null,4)}`
-			updateView(salahObj)
-		},5000)
+			updateView(state)
+		}, 1000)
 	},
 	false
-);
+)
