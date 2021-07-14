@@ -16,7 +16,7 @@ export async function promiseHandler(promise, ...args) {
 }
 
 export function getKeyByValue(object, value) {
-	return Object.keys(object).find((key) => object[key] == `${value}`)
+	return Object.keys(object).find((key) => object[key] == value)
 }
 
 export function makeTimestamp(time) {
@@ -26,5 +26,6 @@ export function makeTimestamp(time) {
 	date.setHours(hour)
 	date.setMinutes(time.split(":")[1])
 	date.setSeconds(0)
+	console.log("DATE IS : " + typeof date);
 	return date
 }
