@@ -6,8 +6,6 @@ export default function processTodaysDate(data) {
 		currentMonthPrayerData[i] = data.data[i].timings
 	}
 
-	console.log("length: ", data.data.length) // 31
-
 	// Getting today's day (1-31)
 	let currentDate = new Date()
 	let currentDay = currentDate.getDate()
@@ -40,12 +38,12 @@ export default function processTodaysDate(data) {
 	function insertDateSorted(arr, key) {
 		try {
 			for (let i = 0; i < arr.length; i++) {
-				let time = arr[i].match("[0-9][0-9]:[0-9][0-9]")[0]
 				if (typeof arr[i] != "string") {
 					console.log(`i am string #${rand}: `, arr[i])
 				} else {
 					console.log(`i am object #${rand}: `, arr[i])
 				}
+				let time = arr[i].match("[0-9][0-9]:[0-9][0-9]")[0]
 				arr[i] = makeTimestamp(time)
 			}
 

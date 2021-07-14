@@ -187,42 +187,41 @@ async function getFileContent(fileEntry) {
 async function getApiData() {
 	console.log("GETTING API DATA")
 
-	// function locationReqPromise() {
-	// 	return new Promise((res, rej) => {
-	// 		let geodata = {}
-	// 		navigator.geolocation.getCurrentPosition(onSuccess, onError)
+	// const [geodata, geoError] = await promiseHandler(locationReqPromise)
+	// geoError ? console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError) : null
 
-	// 		// onSuccess callback accepts a Position object, which contains the current GPS coordinates
-	// 		function onSuccess(position) {
-	// 			// Get postion data and store in geodata
-	// 			geodata.latitude = position.coords.latitudes
-	// 			geodata.longitude = position.coords.longitude
-	// 			console.log(
-	// 				`ONSUCCESS GET CURRENT POSITION: ${position.coords.latitude}, ${position.coords.longitude}`
-	// 			)
-	// 			res(geodata)
-	// 		}
+	const [apiData, apiError] = await promiseHandler(apiReqPromise)
+	apiError ? console.error("ERROR WHILE GETTING API DATA: ", apiError) : null
 
-	// 		// onError Callback receives a PositionError object
-	// 		function onError(error) {
-	// 			rej(`GEOLOCATION ERROR: ${error}`)
-	// 		}
-	// 	})
-	// }
+	return apiData
+
 	// this doesnt work on emulator for some reason
+	function locationReqPromise() {
+		return new Promise((res, rej) => {
+			let geodata = {}
+			navigator.geolocation.getCurrentPosition(onSuccess, onError)
 
-	// let geodata = await locationReqPromise()
-	// console.log("geodata:", geodata)
-	const [data, error] = await promiseHandler(apiReqPromise)
-	error ? console.error("ERROR WHILE GETTING API DATA: ", error) : null
-	// data = await apiReqPromise(null)
-	return data
+			// onSuccess callback accepts a Position object, which contains the current GPS coordinates
+			function onSuccess(position) {
+				// Get postion data and store in geodata
+				geodata.latitude = position.coords.latitudes
+				geodata.longitude = position.coords.longitude
+				console.log(`ONSUCCESS GET CURRENT POSITION: ${position.coords.latitude}, ${position.coords.longitude}`)
+				res(geodata)
+			}
+
+			// onError Callback receives a PositionError object
+			function onError(error) {
+				rej(`GEOLOCATION ERROR: ${error}`)
+			}
+		})
+	}
 
 	function apiReqPromise(...args) {
 		return new Promise((res, rej) => {
 			const AdhanAPIParams = {
-				// latitude: geodata ? `${geodata.latitude}` : "25.2048",
-				// longitude: geodata ? `${geodata.longitude}` : "55.2708",
+				// latitude: geodata != {} ? `${geodata.latitude}` : "25.2048",
+				// longitude: geodata != {} ? `${geodata.longitude}` : "55.2708",
 				latitude: "25.2048", // dubai geodata
 				longitude: "55.2708", // dubai geodata
 				method: "2",
