@@ -2,11 +2,11 @@ import { makeTimestamp, getKeyByValue } from "../utils/utility"
 import processTodaysDate from "./processTodaysDate"
 
 export default function updateView(state) {
-	if (state.salah.data != null) {
+	if (state.salah.apiData != null) {
 		let { currentDate, // current timestamp
 			// currentDayPrayerData, // 1 object literal with 7 key-value pairs where the value is a string
 			currentDayPrayerDataArray // list of sorted timestamps for each of todays prayers (list of objects)
-		} = processTodaysDate(state.salah.data)
+		} = processTodaysDate(state.salah.apiData)
 		console.log("GOT TODAYS DATA " + JSON.stringify({ currentDate, currentDayPrayerDataArray }))
 
 		// get hour and min = 04:32

@@ -10,9 +10,9 @@ export default function processTodaysDate(data) {
 
 	// array of 'timings' objects
 	let currentMonthPrayerData = []
-	for (let i = 0; i < data.data.length; i++) {
+	for (let i = 0; i < data.length; i++) {
 		// console.log('each day data: ', JSON.stringify(data.data[i].timings,null,4));
-		currentMonthPrayerData[i] = data.data[i].timings
+		currentMonthPrayerData[i] = data[i].timings
 	}
 
 	// console.log('current month data: ', JSON.stringify(currentMonthPrayerData,null,4));
