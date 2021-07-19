@@ -3,17 +3,20 @@ import processTodaysDate from "./processTodaysDate"
 export default function updateView(state) {
 	let endOfDay = null
 	let currentDayPrayerDataArray = null
-	const currentDayPrayerData = {}
+	let currentDayPrayerData = {}
 	let gotData = false
-
+	const waqts = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha','Midnight','PrevMidnight']
 	function getNewDayData() {
 		currentDayPrayerDataArray = processTodaysDate(state.salah.apiData)
-		console.log("GOT TODAYS DATA " + JSON.stringify(currentDayPrayerDataArray)) 
-		const waqts = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha','Midnight']
+		console.log("GOT TODAYS DATA " + JSON.stringify(currentDayPrayerDataArray, null, 4)) 
+		
+		
 		waqts.map((waqt, index) => {
-			const timestamp = currentDayPrayerDataArray[index]
-			currentDayPrayerData[timestamp] = waqt
+			let timestamp = currentDayPrayerDataArray[index]
+			currentDayPrayerData[waqt] = timestamp
+			console.log("Adding " + JSON.stringify(currentDayPrayerData, null , 4));
 		})
+	
 			
 		console.log("NEW WAQT OBJ : " + JSON.stringify(currentDayPrayerData, null, 4));
 		endOfDay = currentDayPrayerDataArray[6]
@@ -30,22 +33,36 @@ export default function updateView(state) {
 			// idk some animation maybe?
 		}
 
-		let nextPrayerIndex = null
+		let cIndex = null
+		let pIndex = null
 		let prevPrayerTimestamp = null
 		let nextPrayerTimestamp = null
-		for (let index = 0; index < currentDayPrayerDataArray.length; index++) {
+		for (let index = 0; index < currentDayPrayerDataArray.length-1; index++) {
 			nextPrayerTimestamp = currentDayPrayerDataArray[index];
 			prevPrayerTimestamp = currentDayPrayerDataArray[index-1];
 			if (currentTime < nextPrayerTimestamp) {
-				// console.log('current timestamp: ',currentDate);
-				// console.log('prayer timestamp: ',nextPrayerTimestamp);
-				nextPrayerIndex = index
+				console.log('current timestamp: ',currentTime);
+				console.log('prayer timestamp: ',nextPrayerTimestamp);
+				cIndex = index
+				pIndex = index-1
 				break
 			}
 		}
+		let midtime = new Date().setHours(0,0,0)
+				if ((cIndex === 6 || cIndex === 0) && currentTime >= midtime) {
+					console.log("its past midnight");
+					let prevMidnight = currentDayPrayerDataArray[7]
+					if (currentTime <= prevMidnight) {
+						console.log("Time is between midnight and islamic midnight");
+						nextPrayerTimestamp = currentDayPrayerDataArray[cIndex]
+						prevPrayerTimestamp = prevMidnight
+						pIndex = 6
+					}
+
+				}
 		// console.log('outside prayer timestamp: ', nextPrayerTimestamp);
 	
-		$("#first-prayer").text(currentDayPrayerData[prevPrayerTimestamp])
+		$("#first-prayer").text(waqts[pIndex])
 	
 		// console.log('current waqt: ',currentDayPrayerData[nextPrayerTimestamp]);
 
@@ -58,7 +75,7 @@ export default function updateView(state) {
 
 		// Displaying the time left
 		$("#time-left").text(`${hoursDifference}h${minutesDifference}m`)
-		$("#second-prayer").text(`left until ${currentDayPrayerData[nextPrayerTimestamp]}`)
+		$("#second-prayer").text(`left until ${waqts[cIndex]}`)
 		// remove splash screen and show the app
 		// $("#splash-screen").css("display", "none")
 		// $("#app-container").css("display", "flex")

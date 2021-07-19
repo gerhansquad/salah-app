@@ -26,7 +26,9 @@ export default function processTodaysDate(data) {
 	// Saving today's prayer data to a variable
 	
 	// console.log('current day data: ', JSON.stringify(currentMonthPrayerData[0],null,4));
-	let currentDayPrayerData = currentMonthPrayerData[currentDay - 1] // {"Fajr":"06:04 (PST)","Sunrise":"07:22 (PST)","Dhuhr":"12:10 (PST)",...}
+	let currentDayPrayerData = currentMonthPrayerData[currentDay - 1]
+	let prevDayPrayerData = currentMonthPrayerData[currentDay - 2]
+	 // {"Fajr":"06:04 (PST)","Sunrise":"07:22 (PST)","Dhuhr":"12:10 (PST)",...}
 	// console.log('current day data: ', JSON.stringify(currentDayPrayerData,null,4));
 
 
@@ -42,13 +44,14 @@ export default function processTodaysDate(data) {
 	// })
 
 
-	// Deleting Sunset as it is the same value as Maghrib
 	delete currentDayPrayerData["Sunset"]
-
-	// Deleting Imsak as it didn't come sorted into the right position
 	delete currentDayPrayerData["Imsak"]
-	
-
+	// delete prevDayPrayerData["Sunset"]
+	// delete prevDayPrayerData["Imsak"]
+	prevDayPrayerData = prevDayPrayerData["Midnight"]
+	let ptime = prevDayPrayerData.match("[0-9][0-9]:[0-9][0-9]")[0]
+	prevDayPrayerData = makeTimestamp(ptime)
+	console.log("PREV PRAYER DATA " + JSON.stringify(prevDayPrayerData));
 	/**
 	 * Pushing each Waqt's prayer time (already sorted) to an array so that
 	 * we can determine when in the timeline the system time falls
@@ -57,38 +60,15 @@ export default function processTodaysDate(data) {
 	let i = 0
 	for (const waqt in currentDayPrayerData) {
 		// console.log('date object value: ', typeof currentDayPrayerData[waqt]);
-		currentDayPrayerDataArray.push(currentDayPrayerData[waqt]) // ["06:04 (PST)","07:22 (PST)","12:10 (PST)",...]
+		// ["06:04 (PST)","07:22 (PST)","12:10 (PST)",...]
 		// currentDayPrayerDataArray[i] = makeTimestamp(currentDayPrayerDataArray[i])
-		let time = currentDayPrayerDataArray[i].match("[0-9][0-9]:[0-9][0-9]")[0]
+		let time = currentDayPrayerData[waqt].match("[0-9][0-9]:[0-9][0-9]")[0]
 		currentDayPrayerDataArray[i] = makeTimestamp(time)
 		i++
 	}
 
-	// insertDateSorted(currentDayPrayerDataArray, currentDate)
-
+	currentDayPrayerDataArray = [...currentDayPrayerDataArray, prevDayPrayerData] //inserting prev day's midnight time at the end
 	console.log('todays prayer data: ', JSON.stringify(currentDayPrayerDataArray,null,4));
 
-
-	// startUpdating(currentDate, currentDayPrayerData, currentDayPrayerDataArray)
 	return currentDayPrayerDataArray
-
-	// Inserts a date into a sorted list of dates in the right position
-	// function insertDateSorted(arr, key) {
-	// 	try {
-	// 		for (let i = 0; i < arr.length; i++) {
-	// 			let time = arr[i].match("[0-9][0-9]:[0-9][0-9]")[0]
-	// 			arr[i] = makeTimestamp(time)
-	// 		}
-
-	// 		// let i = arr.length - 1
-	// 		// while (i >= 0 && arr[i] > key) {
-	// 		// 	arr[i + 1] = arr[i]
-	// 		// 	i -= 1
-	// 		// }
-	// 		// arr[i + 1] = key
-	// 		console.log(`everythings fine #${rand}`)
-	// 	} catch (error) {
-	// 		console.error(`DATE SORTING ERROR: #${rand} `, error)
-	// 	}
-	// }
 }

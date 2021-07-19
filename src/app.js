@@ -10,7 +10,7 @@ document.addEventListener(
 		// let monthObj = null
 
 		// this runs asynchronously
-		loadPrayerData(state).then(() => {updateView(state)}) 
+		loadPrayerData(state).then(() => {updateView(state)}) //temporary
 		
 	}, 
 	false
