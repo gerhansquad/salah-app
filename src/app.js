@@ -12,5 +12,6 @@ document.addEventListener(
 		// this runs asynchronously
 		loadPrayerData(state).then(() => {updateView(state)}) 
 		
-	}
+	}, 
+	false
 )
