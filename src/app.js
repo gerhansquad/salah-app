@@ -10,17 +10,7 @@ document.addEventListener(
 		// let monthObj = null
 
 		// this runs asynchronously
-		loadPrayerData(state)
-
-		// .then(({ salah, month }) => {
-		// 	salahObj = salah
-		// 	monthObj = month
-		// })
-
-		// updating the view every second
-		setInterval(() => {
-			updateView(state)
-		}, 1000)
-	},
-	false
+		loadPrayerData(state).then(() => {updateView(state)}) 
+		
+	}
 )

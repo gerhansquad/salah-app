@@ -70,7 +70,7 @@ export default function processTodaysDate(data) {
 
 
 	// startUpdating(currentDate, currentDayPrayerData, currentDayPrayerDataArray)
-	return { currentDate, currentDayPrayerDataArray }
+	return currentDayPrayerDataArray
 
 	// Inserts a date into a sorted list of dates in the right position
 	// function insertDateSorted(arr, key) {

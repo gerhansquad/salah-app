@@ -198,7 +198,7 @@ async function getApiData(state) {
 			const AdhanAPIParams = {
 				latitude: state.salah.settings.apiParams.latitude, 
 				longitude: state.salah.settings.apiParams.longitude, 
-				method: "2",
+				method: state.salah.settings.apiParams.method
 			}
 			cordova.plugin.http.get(
 				"https://api.aladhan.com/v1/calendar",
