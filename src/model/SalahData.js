@@ -1,14 +1,10 @@
 export default class SalahData {
 	constructor() {
 		this.salah = {
-			filename: "salah-times.json",
+			filename: "salah-data.json",
 			file: null,
-			data: null,
-		}
-		this.month = {
-			filename: "saved-month.json",
-			file: null,
-			index: null,
+			apiData: null,
+			settings: {apiParams: {latitude: null, longitude: null, method: "2", school: null}}
 		}
 	}
 }

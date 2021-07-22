@@ -5,39 +5,28 @@ let system_month = startupMonth
 
 let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-let month_data, salah_data, system_timezone
+let salahFileData, system_timezone, api_data
 
 export default async function loadPrayerData(state) {
-	let fileEntries = await getFileEntries()
-	console.log("FILE ENTRIES RECEIVED: " + JSON.stringify(fileEntries, null, 4))
+	let salahFileEntry = await getFileEntry()
+	console.log("FILE ENTRY RECEIVED: " + JSON.stringify(salahFileEntry, null, 4))
+	// read salah-data.json
+	salahFileData = await getFileContent(salahFileEntry)
+	console.log("SALAH FILE DATA: " + JSON.stringify(salahFileData, null, 4))
 
-	// swap
-	if (fileEntries[0].name == "saved-month.json") [fileEntries[0], fileEntries[1]] = [fileEntries[1], fileEntries[0]]
-
-	const salahFileEntry = fileEntries[0]
-	const monthFileEntry = fileEntries[1]
-
-	// read salah-times.json from disk
-	salah_data = await getFileContent(salahFileEntry)
-	console.log("SALAH FILE DATA: " + JSON.stringify(salah_data, null, 4))
-
-	if (salah_data == null || salah_data == "") {
-		console.log("Both files EMPTY\n")
-		// both files are empty so update both files
-		await updateFilesAndState(fileEntries, state)
-		// here the call to refresh view will be invoked.
+	if (salahFileData == null || salahFileData == "") {
+		console.log("No FILE DATA. Making API req & overwriting\n")
+		// no/empty salahFileData. making api req and updating file
+		await updateFilesAndState(salahFileEntry, state)
 	} else {
-		console.log("Both files EXIST\n")
-		// both files exist but we havent update month_data from disk yet so do that: optimisation over structure
-		month_data = await getFileContent(monthFileEntry)
-		console.log("MONTH FILE DATA: " + JSON.stringify(month_data, null, 4))
+		console.log("SALAH FILE EXISTS\n")
+		api_data = salahFileData.apiData
+		console.log("SALAH API FILE DATA: " + JSON.stringify(api_data, null, 4))
 	}
 
 	state.salah.file = salahFileEntry
-	state.salah.data = salah_data
-
-	state.month.file = monthFileEntry
-	state.month.data = month_data
+	state.salah.apiData = api_data
+	console.log("STATE OBJ : " + JSON.stringify(state.salah, null, 4))
 
 	/**
 	 * Start constantly checking every second if timezone and/or month has changed.
@@ -46,14 +35,15 @@ export default async function loadPrayerData(state) {
 	;(async function updateAgain() {
 		system_month = new Date().getMonth() + 1
 		system_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+		console.log("API MONTH IS : " + api_data[0].date.gregorian.month.number)
 		if (
 			system_month != startupMonth || // is the current system month different from when the app booted up?
-			month_data.month != system_month || // is the current system month different from the one stored on disk?
+			api_data[0].date.gregorian.month.number != system_month || // is the current system month different from the one in the API
 			system_timezone != startupTimezone || // is the current timezone different from when the app booted up?
-			system_timezone != salah_data.data[0].meta.timezone // is the current timezone different from the one stored on disk?
+			system_timezone != api_data[0].meta.timezone // is the current timezone different from the one stored on disk?
 		) {
 			console.log("month/timezone change detected\n")
-			await updateFilesAndState(fileEntries, state)
+			await updateFilesAndState(salahfileEntry, state)
 			// here the call to refresh view will be invoked.
 		} else {
 			console.log("NO FILES UPDATED")
@@ -64,52 +54,33 @@ export default async function loadPrayerData(state) {
 		 */
 		setTimeout(updateAgain, 1000)
 	})()
-
-	// return {
-	// 	salah: {
-	// 		filename: "salah-times.json",
-	// 		file: salahFileEntry,
-	// 		data: salah_data,
-	// 	},
-	// 	month: {
-	// 		filename: "saved-month.json",
-	// 		file: monthFileEntry,
-	// 		data: month_data, // data: system_month
-	// 	},
-	// }
 }
 
-async function updateFilesAndState(fileEntries, state) {
-	console.log("UPDATING SALAH AND MONTH FILES AND GLOBAL VARS:\n")
-	console.log(JSON.stringify(fileEntries, null, 4))
+async function updateFilesAndState(fileEntry, state) {
+	console.log("UPDATING SALAH FILE AND GLOBAL VARS:\n")
+	console.log(JSON.stringify(fileEntry, null, 4))
 
-	salah_data = await getApiData()
-	console.log("JUST RECEIVED API DATA")
-	state.salah.data = salah_data
-
-	month_data = { month: system_month }
-	state.month.index = system_month
+	api_data = JSON.parse(await getApiData(state)).data
+	console.log("JUST RECEIVED API DATA" + JSON.stringify(api_data, null, 4))
+	state.salah.apiData = api_data
 
 	try {
-		// we dont await: optimistic updates
-		writeToFile(fileEntries[0], salah_data)
-		writeToFile(fileEntries[1], month_data)
+		// we dont await: optimistic updates (so they might close the app after viewing the data despite it not being saved to disk yet)
+		writeToFile(fileEntry, state.salah)
 	} catch (error) {
 		console.error("ERROR WHILE TRYING TO UPDATE FILE: ", error)
 	}
 }
 
-async function getFileEntries() {
-	console.log("GETTING FILE ENTRIES")
+async function getFileEntry() {
+	console.log("GETTING FILE ENTRY")
 
-	const [fileEntries, error] = await promiseHandler(getFilePromise)
+	const [FileEntry, error] = await promiseHandler(getFilePromise)
 	error ? console.error("ERROR WHILE GETTING FILE ENTRIES: ", error) : null
-	return fileEntries
+	return FileEntry
 
 	function getFilePromise(...args) {
 		return new Promise((res, rej) => {
-			let files = []
-
 			window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, getFsSuccessHandler, getFsErrorHandler)
 
 			function getFsErrorHandler(event) {
@@ -119,10 +90,7 @@ async function getFileEntries() {
 			// Receives a FileSystem object
 			function getFsSuccessHandler(fileSystem) {
 				// create salah FileEntry object representing the salah file on a file system
-				fileSystem.root.getFile("salah-times.json", { create: true }, getFileEntrySuccessHandler, getFileEntryErrorHandler)
-
-				// create month FileEntry object representing the month file on a file system
-				fileSystem.root.getFile("saved-month.json", { create: true }, getFileEntrySuccessHandler, getFileEntryErrorHandler)
+				fileSystem.root.getFile("salah-data.json", { create: true }, getFileEntrySuccessHandler, getFileEntryErrorHandler)
 
 				function getFileEntryErrorHandler(error) {
 					rej(error)
@@ -130,8 +98,7 @@ async function getFileEntries() {
 
 				// Receives a FileEntry object
 				function getFileEntrySuccessHandler(fileEntry) {
-					files.push(fileEntry)
-					if (files.length == 2) res(files)
+					res(fileEntry)
 				}
 			}
 		})
@@ -146,12 +113,12 @@ async function getFileContent(fileEntry) {
 	return data
 
 	function getFileDataPromise(...args) {
+		/**
+		 * - Creates a File object (not an actual file on the fs) containing file properties.
+		 * - Allows JavaScript to access the file content.
+		 * - Represents the current state of the file that the FileEntry represents.
+		 */
 		return new Promise((res, rej) => {
-			/**
-			 * - Creates a File object (not an actual file on the fs) containing file properties.
-			 * - Allows JavaScript to access the file content.
-			 * - Represents the current state of the file that the FileEntry represents.
-			 */
 			fileEntry.file(createFileSuccessHandler, createFileErrorHandler)
 
 			function createFileErrorHandler(error) {
@@ -170,8 +137,7 @@ async function getFileContent(fileEntry) {
 				// set handler for "done loading file data into memory" event
 				reader.onloadend = function (event) {
 					if (reader.result.trim() == "") res(reader.result)
-					// result = ""
-					else res(JSON.parse(reader.result)) // result = "{bla bla bla}"
+					else res(JSON.parse(reader.result))
 				}
 
 				// set handler for a file reading error event
@@ -183,11 +149,20 @@ async function getFileContent(fileEntry) {
 	}
 }
 
-async function getApiData() {
+async function getApiData(state) {
 	console.log("GETTING API DATA")
 
 	const [geodata, geoError] = await promiseHandler(locationReqPromise)
-	geoError ? console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError) : null
+	geoData
+		? (() => {
+				state.settings.data.apiParams.latitude = `${geodata.latitude}`
+				state.settings.data.apiParams.longitude = `${geodata.longitude}`
+		  })()
+		: (() => {
+				console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError)
+				state.salah.settings.apiParams.latitude = "25.2048"
+				state.salah.settings.apiParams.longitude = "55.2708"
+		  })()
 
 	const [apiData, apiError] = await promiseHandler(apiReqPromise)
 	apiError ? console.error("ERROR WHILE GETTING API DATA: ", apiError) : null
@@ -195,10 +170,14 @@ async function getApiData() {
 	return apiData
 
 	// this doesnt work on emulator for some reason
-	function locationReqPromise() {
+	function locationReqPromise(...args) {
 		return new Promise((res, rej) => {
 			let locationData = {}
-			navigator.geolocation.getCurrentPosition(onSuccess, onError)
+			navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 200 })
+			// let wait = setTimeout(() => {
+			// 	clearTimeout(wait)
+			// 	rej('Geolocation API timed out after 500ms...')
+			// },500)
 
 			// onSuccess callback accepts a Position object, which contains the current GPS coordinates
 			function onSuccess(position) {
@@ -209,23 +188,27 @@ async function getApiData() {
 				res(locationData)
 			}
 
-			// onError Callback receives a PositionError object
 			function onError(error) {
-				rej(`GEOLOCATION ERROR: ${error}`)
+				rej(error)
 			}
 		})
 	}
 
+	// let geodata = await locationReqPromise()
+	// console.log("geodata:", geodata)
+	// console.log("API PARAMS ARE" + JSON.stringify(state.salah.settings.apiParams, null, 4))
+	// const [data, error] = await promiseHandler(apiReqPromise)
+	// error ? console.error("ERROR WHILE GETTING API DATA: ", error) : null
+	// data = await apiReqPromise(null)
+	// return data
+
 	function apiReqPromise(...args) {
 		return new Promise((res, rej) => {
 			const AdhanAPIParams = {
-				latitude: geodata ? `${geodata.latitude}` : "25.2048",
-				longitude: geodata ? `${geodata.longitude}` : "55.2708",
-				latitude: "25.2048", // dubai geodata
-				longitude: "55.2708", // dubai geodata
-				method: "2",
+				latitude: state.salah.settings.apiParams.latitude,
+				longitude: state.salah.settings.apiParams.longitude,
+				method: state.salah.settings.apiParams.method,
 			}
-
 			cordova.plugin.http.get(
 				"https://api.aladhan.com/v1/calendar",
 				AdhanAPIParams,
