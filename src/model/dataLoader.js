@@ -42,7 +42,6 @@ export default async function loadPrayerData(state) {
 	/**
 	 * Start constantly checking every second if timezone and/or month has changed.
 	 * If it has, update files and state once again.
-	 * TODO: But are we returning these new values to the view? I dont think so.
 	 */
 	;(async function updateAgain() {
 		system_month = new Date().getMonth() + 1
@@ -187,8 +186,8 @@ async function getFileContent(fileEntry) {
 async function getApiData() {
 	console.log("GETTING API DATA")
 
-	// const [geodata, geoError] = await promiseHandler(locationReqPromise)
-	// geoError ? console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError) : null
+	const [geodata, geoError] = await promiseHandler(locationReqPromise)
+	geoError ? console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError) : null
 
 	const [apiData, apiError] = await promiseHandler(apiReqPromise)
 	apiError ? console.error("ERROR WHILE GETTING API DATA: ", apiError) : null
@@ -198,16 +197,16 @@ async function getApiData() {
 	// this doesnt work on emulator for some reason
 	function locationReqPromise() {
 		return new Promise((res, rej) => {
-			let geodata = {}
+			let locationData = {}
 			navigator.geolocation.getCurrentPosition(onSuccess, onError)
 
 			// onSuccess callback accepts a Position object, which contains the current GPS coordinates
 			function onSuccess(position) {
 				// Get postion data and store in geodata
-				geodata.latitude = position.coords.latitudes
-				geodata.longitude = position.coords.longitude
+				locationData.latitude = position.coords.latitudes
+				locationData.longitude = position.coords.longitude
 				console.log(`ONSUCCESS GET CURRENT POSITION: ${position.coords.latitude}, ${position.coords.longitude}`)
-				res(geodata)
+				res(locationData)
 			}
 
 			// onError Callback receives a PositionError object
@@ -220,8 +219,8 @@ async function getApiData() {
 	function apiReqPromise(...args) {
 		return new Promise((res, rej) => {
 			const AdhanAPIParams = {
-				// latitude: geodata != {} ? `${geodata.latitude}` : "25.2048",
-				// longitude: geodata != {} ? `${geodata.longitude}` : "55.2708",
+				latitude: geodata ? `${geodata.latitude}` : "25.2048",
+				longitude: geodata ? `${geodata.longitude}` : "55.2708",
 				latitude: "25.2048", // dubai geodata
 				longitude: "55.2708", // dubai geodata
 				method: "2",
