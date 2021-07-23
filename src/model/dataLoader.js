@@ -159,7 +159,7 @@ async function getApiData(state) {
 				state.settings.data.apiParams.longitude = `${geodata.longitude}`
 		  })()
 		: (() => {
-				console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError)
+				console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError, " - SETTING DEFAULT LOCATION: UAE")
 				state.salah.settings.apiParams.latitude = "25.2048"
 				state.salah.settings.apiParams.longitude = "55.2708"
 		  })()
@@ -193,14 +193,6 @@ async function getApiData(state) {
 			}
 		})
 	}
-
-	// let geodata = await locationReqPromise()
-	// console.log("geodata:", geodata)
-	// console.log("API PARAMS ARE" + JSON.stringify(state.salah.settings.apiParams, null, 4))
-	// const [data, error] = await promiseHandler(apiReqPromise)
-	// error ? console.error("ERROR WHILE GETTING API DATA: ", error) : null
-	// data = await apiReqPromise(null)
-	// return data
 
 	function apiReqPromise(...args) {
 		return new Promise((res, rej) => {
