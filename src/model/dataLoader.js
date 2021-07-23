@@ -1,4 +1,5 @@
 import { promiseHandler } from "../utils/utility"
+import State from "./SalahData"
 
 let startupMonth = new Date().getMonth() + 1
 let system_month = startupMonth
@@ -7,7 +8,8 @@ let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 let salahFileData, system_timezone, api_data
 
-export default async function loadPrayerData(state) {
+export default async function loadPrayerData() {
+	const state = new State()
 	let salahFileEntry = await getFileEntry()
 	console.log("FILE ENTRY RECEIVED: " + JSON.stringify(salahFileEntry, null, 4))
 	// read salah-data.json
@@ -54,14 +56,12 @@ export default async function loadPrayerData(state) {
 		 */
 		setTimeout(updateAgain, 1000)
 	})()
+
+	return state
 }
 
 async function updateFilesAndState(fileEntry, state) {
-	console.log("UPDATING SALAH FILE AND GLOBAL VARS:\n")
-	console.log(JSON.stringify(fileEntry, null, 4))
-
 	api_data = JSON.parse(await getApiData(state)).data
-	console.log("JUST RECEIVED API DATA" + JSON.stringify(api_data, null, 4))
 	state.salah.apiData = api_data
 
 	try {

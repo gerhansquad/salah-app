@@ -1,71 +1,54 @@
 import processTodaysDate from "./processTodaysDate"
 
 export default function updateView(state) {
-	let newDay = new Date()
-	newDay.setHours(0,0,0)
+
+	let startUpDate = new Date()
 	let currentDayPrayerDataArray = null
 	let currentDayPrayerData = {}
-	const waqts = ['Fajr','Dhuhr','Asr','Maghrib','Isha','PrevIsha', 'NextFajr']
+
+	const waqts = ['PrevIsha','Fajr','Dhuhr','Asr','Maghrib','Isha','NextFajr']	
+	
 	function getNewDayData() {
 		currentDayPrayerDataArray = processTodaysDate(state.salah.apiData)
-		console.log("GOT TODAYS DATA " , JSON.stringify(currentDayPrayerDataArray, null, 4)) 
-		
-		
 		waqts.map((waqt, index) => {
 			let timestamp = currentDayPrayerDataArray[index]
 			currentDayPrayerData[waqt] = timestamp
-			console.log("Adding " + JSON.stringify(currentDayPrayerData, null , 4));
 		})
-	
 			
-		console.log("NEW WAQT OBJ : " + JSON.stringify(currentDayPrayerData, null, 4));
 	}
-
+	
 	(function updateTime() {
-		let currentTime = new Date()
-		if (currentDayPrayerDataArray === null || currentTime === newDay) {
-			console.log("currentDayPrayerDataArray is null or its a new day");
-			getNewDayData()
-		}
 		let nIndex = null
 		let pIndex = null
-		let prevPrayerTimestamp = null
-		let nextPrayerTimestamp = null
-		if (currentTime > currentDayPrayerDataArray[4]) { // time has passed isha prayertime -> prev prayer is prevday's isha
-			nextPrayerTimestamp = currentDayPrayerDataArray[6];
-			prevPrayerTimestamp = currentDayPrayerDataArray[4];
-			nIndex = 0
-			pIndex = 4
+		const currentTime = new Date()
+		if (
+			currentDayPrayerDataArray === null // app first boots up
+			|| currentTime.getDate() != startUpDate.getDate() // its a new day
+		) {
+			startUpDate = currentTime
+			getNewDayData()
 		}
-		else {
-			for (let index = 0; index < currentDayPrayerDataArray.length-2; index++) {
-				if (currentTime < currentDayPrayerDataArray[index]) {
-					if (index === 0) { //if its the first prayer -> prev prayer is prevday's isha
-						nextPrayerTimestamp = currentDayPrayerDataArray[index];
-						prevPrayerTimestamp = currentDayPrayerDataArray[5];
-						nIndex = index
-						pIndex = 4
-					}
-					else { //leave as it is
-						nextPrayerTimestamp = currentDayPrayerDataArray[index];
-						prevPrayerTimestamp = currentDayPrayerDataArray[index-1];
-						nIndex = index
-						pIndex = index-1
-					}
-					break
-				} 
+		
+		for (let index = 0; index < currentDayPrayerDataArray.length; index++) {
+			if (currentTime < currentDayPrayerDataArray[index]) {
+				nIndex = index
+				pIndex = index-1
+				break
 			}
 		}
 
-
-		console.log('prev prayer timestamp: ', prevPrayerTimestamp);
-		console.log('current timestamp: ', currentTime);
-		console.log('next prayer timestamp: ', nextPrayerTimestamp);
-		
-		$("#first-prayer").text(waqts[pIndex])
+		const nextPrayerTimestamp = currentDayPrayerDataArray[nIndex];
+		const prevPrayerTimestamp = currentDayPrayerDataArray[pIndex];
 	
-		// console.log('current waqt: ',currentDayPrayerData[nextPrayerTimestamp]);
-
+		// console.log('prev prayer timestamp: ', prevPrayerTimestamp);
+		// console.log('current timestamp: ', currentTime);
+		// console.log('next prayer timestamp: ', nextPrayerTimestamp);
+		
+		const last_prayer = waqts[pIndex] == "PrevIsha" ? "Isha" : waqts[pIndex]
+		const next_prayer = waqts[nIndex] == "NextFajr" ? "Fajr" : waqts[nIndex]
+		
+		$("#first-prayer").text(last_prayer)
+	
 		//calculating the final time in ms
 		let timeLeftInMs = nextPrayerTimestamp - currentTime
 
@@ -75,11 +58,11 @@ export default function updateView(state) {
 
 		// Displaying the time left
 		$("#time-left").text(`${hoursDifference}h${minutesDifference}m`)
-		$("#second-prayer").text(`left until ${waqts[nIndex]}`)
+		$("#second-prayer").text(`left until ${next_prayer}`)
 		// remove splash screen and show the app
 		// $("#splash-screen").css("display", "none")
 		// $("#app-container").css("display", "flex")
 		setTimeout(updateTime, 1000)
 	})()
-	
+	navigator.splashscreen.hide();
 }
