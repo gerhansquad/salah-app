@@ -3,8 +3,6 @@ import { makeTimestamp } from "../utils/utility"
 // let prevData = null
 
 export default function processTodaysDate(data) {
-	const rand = Math.random()
-
 	// prevData ? console.log('prevdata: ',JSON.stringify(prevData,null,4),' new data: ',JSON.stringify(data.data,null,4)) : null
 	// prevData = data.data
 
@@ -54,14 +52,20 @@ export default function processTodaysDate(data) {
 	 */
 	let currentDayPrayerDataArray = []
 	let i = 0
+
 	for (const waqt in currentDayPrayerData) {
 		let time = currentDayPrayerData[waqt].match("[0-9][0-9]:[0-9][0-9]")[0]
 		currentDayPrayerDataArray[i] = makeTimestamp(time)
 		i++
 	}
-	prevDayPrayerData = makeTimestamp(prevDayPrayerData.match("[0-9][0-9]:[0-9][0-9]")[0])
-	nextDayPrayerData = makeTimestamp(nextDayPrayerData.match("[0-9][0-9]:[0-9][0-9]")[0])
-	currentDayPrayerDataArray = [...currentDayPrayerDataArray, prevDayPrayerData, nextDayPrayerData]
+
+	let prevIshaTimestamp = makeTimestamp(prevDayPrayerData.match("[0-9][0-9]:[0-9][0-9]")[0])
+	prevIshaTimestamp.setDate(prevIshaTimestamp.getDate() - 1)
+
+	let nextFajrTimestamp = makeTimestamp(nextDayPrayerData.match("[0-9][0-9]:[0-9][0-9]")[0])
+	nextFajrTimestamp.setDate(nextFajrTimestamp.getDate() + 1)
+
+	currentDayPrayerDataArray = [prevIshaTimestamp, ...currentDayPrayerDataArray, nextFajrTimestamp]
 
 	console.log("todays prayer data: ", JSON.stringify(currentDayPrayerDataArray, null, 4))
 
