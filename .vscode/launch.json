@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Android on emulator",
+            "type": "cordova",
+            "request": "launch",
+            "platform": "android",
+            "target": "Pixel_4_XL_API_30",
+            "port": 9222,
+            "sourceMaps": true,
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}
