@@ -62,5 +62,5 @@ export default function updateView(state) {
 		// $("#app-container").css("display", "flex")
 		setTimeout(updateTime, 1000)
 	})()
-	navigator.splashscreen.hide()
+	// navigator.splashscreen.hide()
 }

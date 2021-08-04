@@ -1,14 +1,26 @@
 import { promiseHandler } from "../utils/utility"
 import State from "./SalahData"
+import CodeDict from '../shared/codes.json'
 
 let startupMonth = new Date().getMonth() + 1
 let system_month = startupMonth
 
 let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-let salahFileData, system_timezone, api_data
+let salahFileData, system_timezone, api_data, settings
 
 export default async function loadPrayerData() {
+	// nativegeocoder.reverseGeocode(success, failure, 25.2048, 55.2708, { useLocale: true, maxResults: 1 });
+ 
+	// function success(result) {
+  	// var firstResult = result[0];
+  	// console.log("First Result: " + JSON.stringify(firstResult));
+	// }
+ 
+	// function failure(err) {
+  	// console.log(err);
+	// }
+
 	const state = new State()
 	let salahFileEntry = await getFileEntry()
 	console.log("FILE ENTRY RECEIVED: " + JSON.stringify(salahFileEntry, null, 4))
@@ -20,14 +32,15 @@ export default async function loadPrayerData() {
 		console.log("No FILE DATA. Making API req & overwriting\n")
 		// no/empty salahFileData. making api req and updating file
 		await updateFilesAndState(salahFileEntry, state)
-	} else {
-		console.log("SALAH FILE EXISTS\n")
-		api_data = salahFileData.apiData
-		console.log("SALAH API FILE DATA: " + JSON.stringify(api_data, null, 4))
 	}
+	else {
+		console.log("SALAH FILE EXISTS\n")
+	}
+	
+	api_data = salahFileData.apiData
+	console.log("SALAH API FILE DATA: " + JSON.stringify(api_data, null, 4))
+	state.salah = salahFileData
 
-	state.salah.file = salahFileEntry
-	state.salah.apiData = api_data
 	console.log("STATE OBJ : " + JSON.stringify(state.salah, null, 4))
 
 	/**
@@ -45,7 +58,7 @@ export default async function loadPrayerData() {
 			system_timezone != api_data[0].meta.timezone // is the current timezone different from the one stored on disk?
 		) {
 			console.log("month/timezone change detected\n")
-			await updateFilesAndState(salahfileEntry, state)
+			await updateFilesAndState(salahFileEntry, state)
 			// here the call to refresh view will be invoked.
 		} else {
 			console.log("NO FILES UPDATED")
@@ -152,11 +165,11 @@ async function getFileContent(fileEntry) {
 async function getApiData(state) {
 	console.log("GETTING API DATA")
 
-	const [geodata, geoError] = await promiseHandler(locationReqPromise)
+	const [geoData, geoError] = await promiseHandler(locationReqPromise)
 	geoData
 		? (() => {
-				state.settings.data.apiParams.latitude = `${geodata.latitude}`
-				state.settings.data.apiParams.longitude = `${geodata.longitude}`
+				state.settings.data.apiParams.latitude = `${geoData.latitude}`
+				state.settings.data.apiParams.longitude = `${geoData.longitude}`
 		  })()
 		: (() => {
 				console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError, " - SETTING DEFAULT LOCATION: UAE")
@@ -195,11 +208,17 @@ async function getApiData(state) {
 	}
 
 	function apiReqPromise(...args) {
+
 		return new Promise((res, rej) => {
+
+			const lats = state.salah.settings.apiParams.latitude
+			const longs = state.salah.settings.apiParams.longitude
+			
+			
 			const AdhanAPIParams = {
-				latitude: state.salah.settings.apiParams.latitude,
-				longitude: state.salah.settings.apiParams.longitude,
-				method: state.salah.settings.apiParams.method,
+				latitude: lats,
+				longitude: longs,
+				method: CodeDict[isoAlpha2],
 			}
 			cordova.plugin.http.get(
 				"https://api.aladhan.com/v1/calendar",

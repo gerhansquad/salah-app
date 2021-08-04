@@ -1,1 +1,1 @@
-{"plugins":["cordova-plugin-whitelist","cordova-plugin-geolocation","cordova-plugin-advanced-http","cordova-plugin-file"]}
+{"plugins":["cordova-plugin-whitelist","cordova-plugin-geolocation","cordova-plugin-advanced-http","cordova-plugin-file","cordova-plugin-country","cordova-plugin-nativegeocoder","cordova-plugin-add-swift-support"]}
