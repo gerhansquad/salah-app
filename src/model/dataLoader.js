@@ -10,16 +10,6 @@ let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 let salahFileData, system_timezone, api_data, settings
 
 export default async function loadPrayerData() {
-	// nativegeocoder.reverseGeocode(success, failure, 25.2048, 55.2708, { useLocale: true, maxResults: 1 });
- 
-	// function success(result) {
-  	// var firstResult = result[0];
-  	// console.log("First Result: " + JSON.stringify(firstResult));
-	// }
- 
-	// function failure(err) {
-  	// console.log(err);
-	// }
 
 	const state = new State()
 	let salahFileEntry = await getFileEntry()
@@ -214,11 +204,26 @@ async function getApiData(state) {
 			const lats = state.salah.settings.apiParams.latitude
 			const longs = state.salah.settings.apiParams.longitude
 			
+			//do auto detect only if it is enabled:
+			if (state.salah.settings.autoDetect) {
+				console.log("AUTODetect enabled");
+				nativegeocoder.reverseGeocode(success, failure, lats, longs, { useLocale: true, maxResults: 1 });
+			
+				function success(result) {
+				const code = result[0].countryCode;
+				console.log("Country Code: " + JSON.stringify(code));
+				state.salah.settings.apiParams.method = CodeDict[code];
+				}
+			
+				function failure(err) {
+				console.log(err);
+				}
+			}
 			
 			const AdhanAPIParams = {
-				latitude: lats,
-				longitude: longs,
-				method: CodeDict[isoAlpha2],
+				latitude: "25.2048",
+				longitude: "55.2708",
+				method: "4"
 			}
 			cordova.plugin.http.get(
 				"https://api.aladhan.com/v1/calendar",
