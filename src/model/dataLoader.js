@@ -1,4 +1,4 @@
-import { promiseHandler } from "../utils/utility"
+import { promiseHandler, getFileEntry, getFileContent, writeToFile } from "../utils/utility"
 import State from "./SalahData"
 import CodeDict from '../shared/codes.json'
 
@@ -7,7 +7,7 @@ let system_month = startupMonth
 
 let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-let salahFileData, system_timezone, api_data, settings
+let salahFileData, system_timezone, api_data
 
 export default async function loadPrayerData() {
 
@@ -25,11 +25,10 @@ export default async function loadPrayerData() {
 	}
 	else {
 		console.log("SALAH FILE EXISTS\n")
+		state.salah = salahFileData
 	}
 	
-	api_data = salahFileData.apiData
 	console.log("SALAH API FILE DATA: " + JSON.stringify(api_data, null, 4))
-	state.salah = salahFileData
 
 	console.log("STATE OBJ : " + JSON.stringify(state.salah, null, 4))
 
@@ -66,6 +65,7 @@ export default async function loadPrayerData() {
 async function updateFilesAndState(fileEntry, state) {
 	api_data = JSON.parse(await getApiData(state)).data
 	state.salah.apiData = api_data
+	state.salah.file = fileEntry
 
 	try {
 		// we dont await: optimistic updates (so they might close the app after viewing the data despite it not being saved to disk yet)
@@ -75,113 +75,56 @@ async function updateFilesAndState(fileEntry, state) {
 	}
 }
 
-async function getFileEntry() {
-	console.log("GETTING FILE ENTRY")
-
-	const [FileEntry, error] = await promiseHandler(getFilePromise)
-	error ? console.error("ERROR WHILE GETTING FILE ENTRIES: ", error) : null
-	return FileEntry
-
-	function getFilePromise(...args) {
-		return new Promise((res, rej) => {
-			window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, getFsSuccessHandler, getFsErrorHandler)
-
-			function getFsErrorHandler(event) {
-				rej(event.target.error.code)
-			}
-
-			// Receives a FileSystem object
-			function getFsSuccessHandler(fileSystem) {
-				// create salah FileEntry object representing the salah file on a file system
-				fileSystem.root.getFile("salah-data.json", { create: true }, getFileEntrySuccessHandler, getFileEntryErrorHandler)
-
-				function getFileEntryErrorHandler(error) {
-					rej(error)
-				}
-
-				// Receives a FileEntry object
-				function getFileEntrySuccessHandler(fileEntry) {
-					res(fileEntry)
-				}
-			}
-		})
-	}
-}
-
-async function getFileContent(fileEntry) {
-	console.log("FILE GOING TO BE READ: " + JSON.stringify(fileEntry, null, 4))
-
-	const [data, error] = await promiseHandler(getFileDataPromise)
-	error ? console.error("ERROR WHILE READING FILE: ", error) : null
-	return data
-
-	function getFileDataPromise(...args) {
-		/**
-		 * - Creates a File object (not an actual file on the fs) containing file properties.
-		 * - Allows JavaScript to access the file content.
-		 * - Represents the current state of the file that the FileEntry represents.
-		 */
-		return new Promise((res, rej) => {
-			fileEntry.file(createFileSuccessHandler, createFileErrorHandler)
-
-			function createFileErrorHandler(error) {
-				rej(error)
-			}
-
-			// Receives a File object
-			function createFileSuccessHandler(file) {
-				// create a FileReader object
-				var reader = new FileReader()
-
-				// asynchronously load file data into memory
-				console.log(`Starting file read...\n`)
-				reader.readAsText(file)
-
-				// set handler for "done loading file data into memory" event
-				reader.onloadend = function (event) {
-					if (reader.result.trim() == "") res(reader.result)
-					else res(JSON.parse(reader.result))
-				}
-
-				// set handler for a file reading error event
-				reader.onerror = function (error) {
-					rej(error)
-				}
-			}
-		})
-	}
-}
-
 async function getApiData(state) {
 	console.log("GETTING API DATA")
-
-	const [geoData, geoError] = await promiseHandler(locationReqPromise)
+	// Gets location of the device in terms of lats and longs (We should move this function to the deviceready fn)
+	const [geoData, error] = await promiseHandler(locationReqPromise)
 	geoData
 		? (() => {
 				state.settings.data.apiParams.latitude = `${geoData.latitude}`
 				state.settings.data.apiParams.longitude = `${geoData.longitude}`
 		  })()
 		: (() => {
-				console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", geoError, " - SETTING DEFAULT LOCATION: UAE")
+				console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", error, " - SETTING DEFAULT LOCATION: UAE")
 				state.salah.settings.apiParams.latitude = "25.2048"
 				state.salah.settings.apiParams.longitude = "55.2708"
 		  })()
 
+	// Do autodetect only if it is enabled
+	if (state.salah.settings.autoDetect) {
+		const [detectedMethod, methodError] = await promiseHandler(autoDetectPromise)
+		methodError && console.error("ERROR WHILE DETECTING METHOD: ", methodError) 
+		state.salah.settings.apiParams.method = detectedMethod
+	}
+	// Fetches api data
 	const [apiData, apiError] = await promiseHandler(apiReqPromise)
-	apiError ? console.error("ERROR WHILE GETTING API DATA: ", apiError) : null
+	apiError && console.error("ERROR WHILE GETTING API DATA: ", apiError) 
 
 	return apiData
+
+	function autoDetectPromise() {
+		return new Promise((res, rej) => {
+				console.log("AUTODetect enabled");
+				nativegeocoder.reverseGeocode(success, failure, state.salah.settings.apiParams.latitude, state.salah.settings.apiParams.longitude, { useLocale: true, maxResults: 1 });
+			
+				function success(result) {
+				const code = result[0].countryCode;
+				console.log("Country Code: " + JSON.stringify(code));
+				console.log(CodeDict[code]);
+				res(CodeDict[code])
+				}
+			
+				function failure(err) {
+				rej(err)
+				}
+		})
+	}
 
 	// this doesnt work on emulator for some reason
 	function locationReqPromise(...args) {
 		return new Promise((res, rej) => {
 			let locationData = {}
 			navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 200 })
-			// let wait = setTimeout(() => {
-			// 	clearTimeout(wait)
-			// 	rej('Geolocation API timed out after 500ms...')
-			// },500)
-
 			// onSuccess callback accepts a Position object, which contains the current GPS coordinates
 			function onSuccess(position) {
 				// Get postion data and store in geodata
@@ -201,29 +144,11 @@ async function getApiData(state) {
 
 		return new Promise((res, rej) => {
 
-			const lats = state.salah.settings.apiParams.latitude
-			const longs = state.salah.settings.apiParams.longitude
-			
-			//do auto detect only if it is enabled:
-			if (state.salah.settings.autoDetect) {
-				console.log("AUTODetect enabled");
-				nativegeocoder.reverseGeocode(success, failure, lats, longs, { useLocale: true, maxResults: 1 });
-			
-				function success(result) {
-				const code = result[0].countryCode;
-				console.log("Country Code: " + JSON.stringify(code));
-				state.salah.settings.apiParams.method = CodeDict[code];
-				}
-			
-				function failure(err) {
-				console.log(err);
-				}
-			}
-			
 			const AdhanAPIParams = {
-				latitude: "25.2048",
-				longitude: "55.2708",
-				method: "4"
+				latitude: state.salah.settings.apiParams.latitude,
+				longitude: state.salah.settings.apiParams.longitude,
+				method: state.salah.settings.apiParams.method,
+				school: state.salah.settings.apiParams.school
 			}
 			cordova.plugin.http.get(
 				"https://api.aladhan.com/v1/calendar",
@@ -238,24 +163,4 @@ async function getApiData(state) {
 			)
 		})
 	}
-}
-
-function writeToFile(fileEntry, data) {
-	const createWriterSuccessHandler = (fileWriter) => {
-		fileWriter.onwriteend = (event) => {
-			console.log(`Successful file write to ${fileEntry.name}`)
-		}
-
-		fileWriter.onerror = (error) => {
-			throw error
-		}
-
-		fileWriter.write(data)
-	}
-
-	const createWriterErrorHandler = (error) => {
-		throw error
-	}
-
-	fileEntry.createWriter(createWriterSuccessHandler, createWriterErrorHandler)
 }

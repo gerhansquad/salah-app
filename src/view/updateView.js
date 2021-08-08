@@ -38,10 +38,6 @@ export default function updateView(state) {
 		const nextPrayerTimestamp = currentDayPrayerDataArray[nIndex]
 		const prevPrayerTimestamp = currentDayPrayerDataArray[pIndex]
 
-		// console.log('prev prayer timestamp: ', prevPrayerTimestamp);
-		// console.log('current timestamp: ', currentTime);
-		// console.log('next prayer timestamp: ', nextPrayerTimestamp);
-
 		const last_prayer = waqts[pIndex] == "PrevIsha" ? "Isha" : waqts[pIndex]
 		const next_prayer = waqts[nIndex] == "NextFajr" ? "Fajr" : waqts[nIndex]
 
@@ -57,10 +53,7 @@ export default function updateView(state) {
 		// Displaying the time left
 		$("#time-left").text(`${hoursDifference}h${minutesDifference}m`)
 		$("#second-prayer").text(`left until ${next_prayer}`)
-		// remove splash screen and show the app
-		// $("#splash-screen").css("display", "none")
-		// $("#app-container").css("display", "flex")
 		setTimeout(updateTime, 1000)
 	})()
-	// navigator.splashscreen.hide()
+	
 }
