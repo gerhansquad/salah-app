@@ -2,9 +2,9 @@
 
 Date.prototype.toJSON = function(){ return this.toLocaleString(); } //This is so we can view dates in logs properly 
 
-function makeTimestamp(time, j) {
+function makeTimestamp(time, dayNo) {
 	let date = new Date()
-    date.setDate(j)
+    date.setDate(dayNo)
 	let hour = time.split(":")[0]
 	hour = hour == 0 ? 24 : hour
 	date.setHours(hour)
@@ -14,7 +14,7 @@ function makeTimestamp(time, j) {
 }
 
 function processDate(data) {
-	const cleanData = data.map((time, j) => {
+	const cleanData = data.map((time, dayNo) => {
         let times = time.timings // {"Fajr":"06:04 (PST)","Sunrise":"07:22 (PST)","Dhuhr":"12:10 (PST)",...}
         delete times["Sunset"]
         delete times["Imsak"]
@@ -24,7 +24,7 @@ function processDate(data) {
         let currentMonthPrayerDataArray = []
         for (const waqt in times) {
             let time = times[waqt].match("[0-9][0-9]:[0-9][0-9]")[0]
-            currentMonthPrayerDataArray[i] = makeTimestamp(time, j+1)
+            currentMonthPrayerDataArray[i] = makeTimestamp(time, dayNo+1)
             i++
         }
         return currentMonthPrayerDataArray;
