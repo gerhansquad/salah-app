@@ -4,8 +4,9 @@ const testData = require ("../shared/test.json")
 
 Date.prototype.toJSON = function(){ return this.toLocaleString(); } //This is so we can view dates in logs properly 
 
-function makeTimestamp(time, monthNo, dayNo) {
+function makeTimestamp(time, yearNo, monthNo, dayNo) {
 	let date = new Date()
+    date.setFullYear(yearNo)
     date.setDate(dayNo)
     date.setMonth(parseInt(monthNo)-1)
 	let hour = time.split(":")[0]
@@ -18,8 +19,11 @@ function makeTimestamp(time, monthNo, dayNo) {
 // current and next
 // state.salah.apiData.current = processDate(current)
 // state.salah.apiData.next = processDate(next)
-function processDate(data) {
+function processDate(data, state) {
     let yearData = []
+    const apiYear = parseInt(data[1][0].date.gregorian.year);
+    const currentYear = new Date().getFullYear()
+    currentYear === apiYear && (() => {state.salah.apiData.timeZone = data[1][0].meta.timezone; state.salah.apiData.apiYear = apiYear;})()
     for (const month in data) {
         const monthData = data[month].map((time, dayNo) => {
             let times = time.timings // {"Fajr":"06:04 (PST)","Sunrise":"07:22 (PST)","Dhuhr":"12:10 (PST)",...}
@@ -31,9 +35,10 @@ function processDate(data) {
             let currentDayPrayerDataArray = []
             for (const waqt in times) {
                 let time = times[waqt].match("[0-9][0-9]:[0-9][0-9]")[0]
-                currentDayPrayerDataArray[i] = makeTimestamp(time, month, dayNo+1)
-                if (waqt === "Isha" && dayNo === data[month].length-1 && month === "12") {
+                currentDayPrayerDataArray[i] = makeTimestamp(time, apiYear, month, dayNo+1)
+                if (currentYear === apiYear && waqt === "Isha" && dayNo === data[month].length-1 && month === "12") {
                     console.log(JSON.stringify(currentDayPrayerDataArray[i]));
+                    state.salah.apiData.lastPrayerTimestamp = currentDayPrayerDataArray[i];
                 }
                 i++
             }

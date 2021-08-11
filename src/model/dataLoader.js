@@ -1,13 +1,12 @@
 import { promiseHandler, getFileEntry, getFileContent, writeToFile } from "../utils/utility"
 import State from "./SalahData"
-import CodeDict from '../shared/codes.json'
 
 // let startupMonth = new Date().getMonth() + 1
 // let system_month = startupMonth
 
 let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-let salahFileData, system_timezone, api_data
+let salahFileData, system_timezone
 
 export default async function loadPrayerData() {
 
@@ -83,20 +82,23 @@ async function updateFilesAndState(fileEntry, state, dualCall) {
 	 *  previshaa delete
 	 */
 	const currentYear = new Date().getFullYear()
-	if (dualCall) {
-		const apiData1 = getApiData(state, currentYear)
-		const apiData2 = getApiData(state, currentYear+1)
+	const apiData1, apiData2 
+	dualCall ? (() => {
+		apiData1 = getApiData(state, currentYear)
+		apiData2 = getApiData(state, currentYear+1)
 		const api_data = await Promise.all([apiData1,apiData2])
 		state.salah.apiData.currentYear = processData(api_data[0])
-		state.salah.apiData.nextYear = processData(api_data2[1])
-	} else {
+		state.salah.apiData.nextYear = processData(api_data[1])
+	})() : (() => {
 		// delete state.salah.apiData[0]
 		// api_data = [...(state.salah.apiData), await getApiData(state, currentYear+2)]
-		api_data = await getApiData(state, currentYear+2)
-		state.salah.apiData.nextYear = processData(api_data)
-	}
+		apiData1 = await getApiData(state, currentYear+2)
+		state.salah.apiData.nextYear = processData(apiData1)
+	})()
 	// const api_data = JSON.parse(await getApiData(state, dualCall)).data
 	// state.salah.apiData = process(api_data) // process(apiData)
+	
+
 	state.salah.file = fileEntry
 
 	try {
@@ -118,16 +120,12 @@ async function getApiData(state, year) {
 		  })()
 		: (() => {
 				console.error("ERROR WHILE GETTING SYSTEM LOCATION: ", error, " - SETTING DEFAULT LOCATION: UAE")
-				state.salah.settings.apiParams.latitude = "25.2048" // for testing 
-				state.salah.settings.apiParams.longitude = "55.2708" // for testing
+				state.salah.apiParams.latitude = "25.2048" // for testing 
+				state.salah.apiParams.longitude = "55.2708" // for testing
 		  })()
 
 	// Do autodetect only if it is enabled
-	if (state.salah.settings.autoDetect) {
-		const [detectedMethod, methodError] = await promiseHandler(autoDetectPromise)
-		methodError && console.error("ERROR WHILE DETECTING METHOD: ", methodError) 
-		state.salah.settings.apiParams.method = detectedMethod
-	}
+	state.salah.settings.autoDetect && (() => {state.salah.apiParams.method = "null"})()
 
 	// const currentYear = new Date().getFullYear()
 	// async function resolveApiCalls(){
@@ -144,25 +142,6 @@ async function getApiData(state, year) {
 	apiError && console.error("ERROR WHILE GETTING API DATA: ", apiError)
 
 	return apiData
-
-	function autoDetectPromise() {
-		return new Promise((res, rej) => {
-				console.log("AUTODetect doing its thing");
-				nativegeocoder.reverseGeocode(success, failure, state.salah.settings.apiParams.latitude, state.salah.settings.apiParams.longitude, { useLocale: true, maxResults: 1 });
-			
-				function success(result) {
-				const code = result[0].countryCode;
-				console.log("Country Code: " + JSON.stringify(code));
-				console.log(CodeDict[code]);
-				res(CodeDict[code])
-				}
-			
-				function failure(err) {
-				rej(err)
-				}
-		})
-	}
-
 	// this doesnt work on emulator for some reason
 	function locationReqPromise(...args) {
 		return new Promise((res, rej) => {
@@ -187,11 +166,12 @@ async function getApiData(state, year) {
 		return new Promise((res, rej) => {
 
 			const AdhanAPIParams = {
-				latitude: state.salah.settings.apiParams.latitude,
-				longitude: state.salah.settings.apiParams.longitude,
-				method: state.salah.settings.apiParams.method,
-				school: state.salah.settings.apiParams.school,
-				year: `${year}`
+				latitude: state.salah.apiParams.latitude,
+				longitude: state.salah.apiParams.longitude,
+				method: state.salah.apiParams.method,
+				school: state.salah.apiParams.school,
+				year: `${year}`,
+				annual: "true"
 			}
 
 			cordova.plugin.http.get(

@@ -3,8 +3,9 @@ export default class SalahData {
 		this.salah = {
 			filename: "salah-data.json",
 			file: null,
-			apiData: {currentYear: null, nextYear: null, lastPrayerTimestamp: null},
-			settings: {apiParams: {latitude: null, longitude: null, method: "null", school: "null"}, autoDetect: true}
+			apiData: {currentYear: null, nextYear: null, lastPrayerTimestamp: null, timeZone: null, apiYear: null},
+			settings: {autoDetect: true, detectedMethod: null},
+			apiParams: {latitude: null, longitude: null, method: null, school: "null"}
 		}
 	}
 }
