@@ -1,25 +1,6 @@
-// This is just for testing, will be implemented later
-const testData = require ("../shared/test.json")
-
-
-Date.prototype.toJSON = function(){ return this.toLocaleString(); } //This is so we can view dates in logs properly 
-
-function makeTimestamp(time, yearNo, monthNo, dayNo) {
-	let date = new Date()
-    date.setFullYear(yearNo)
-    date.setDate(dayNo)
-    date.setMonth(parseInt(monthNo)-1)
-	let hour = time.split(":")[0]
-	hour = hour == 0 ? 24 : hour
-	date.setHours(hour)
-	date.setMinutes(time.split(":")[1])
-	date.setSeconds(0)
-	return date
-}
-// current and next
-// state.salah.apiData.current = processDate(current)
-// state.salah.apiData.next = processDate(next)
-function processDate(data, state) {
+import { makeTimestamp } from "../utils/utility"
+export { processData }
+function processData(data, state) {
     let yearData = []
     const apiYear = parseInt(data[1][0].date.gregorian.year);
     const currentYear = new Date().getFullYear()
@@ -59,6 +40,3 @@ function processDate(data, state) {
     // console.log(`\nToday's Timings : ${JSON.stringify(yearData[n-1])}`)
 
 }
-
-// This is to mimic the api data (for testing)
-processDate(testData)

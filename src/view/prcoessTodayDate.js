@@ -1,0 +1,2 @@
+function processTodayDate (state, time) {
+}

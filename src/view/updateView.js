@@ -1,4 +1,4 @@
-import processTodaysDate from "./processTodaysDate"
+import processDate from "../model/processData"
 
 export default function updateView(state) {
 	let startUpDate = new Date()
@@ -7,8 +7,7 @@ export default function updateView(state) {
 
 	const waqts = ["PrevIsha", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha", "NextFajr"]
 
-	function getNewDayData() {
-		currentDayPrayerDataArray = processTodaysDate(state.salah.apiData)
+	function getNewDayData(time) {
 		waqts.map((waqt, index) => {
 			let timestamp = currentDayPrayerDataArray[index]
 			currentDayPrayerData[waqt] = timestamp
@@ -24,7 +23,7 @@ export default function updateView(state) {
 			currentTime.getDate() != startUpDate.getDate() // its a new day
 		) {
 			startUpDate = currentTime
-			getNewDayData()
+			getNewDayData(currentTime)
 		}
 
 		for (let index = 0; index < currentDayPrayerDataArray.length; index++) {
