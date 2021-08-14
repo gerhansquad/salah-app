@@ -43,10 +43,12 @@ function processDate(data) {
         })
         yearData.push(monthData) 
     }
-    let currentDate = new Date()
+    let currentDate = new Date(2021, 11, 2)
+    // let currentDate = new Date()
     let firstPrayer
     let lastPrayer
     let currentDayPrayerData = []
+    currentDayPrayerDataArray = {}
     currentDayPrayerData = yearData[currentDate.getMonth()][currentDate.getDate()-1]
   
 
@@ -56,31 +58,42 @@ function processDate(data) {
         if (currentDate.getMonth() === 0) {
             //firstPrayer = state.salah.apiData.lastPrayerTimestamp
             lastPrayer = yearData[currentDate.getMonth()][currentDate.getDate()][0]
+            console.log("First Day And First Month");
                 
         } else { //else if first day of month:  first prayer = prev months last ishaa & last prayer = next days fajr
-            firstPrayer = yearData[currentDate.getMonth()-1][new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate()][4]
+            firstPrayer = yearData[currentDate.getMonth()-1][new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate()-1][4]
             lastPrayer = yearData[currentDate.getMonth()][currentDate.getDate()][0]
+            console.log("First Day of month");
         }
         
     }
     else if (currentDate.getDate() === new Date(currentDate.getFullYear(), currentDate.getMonth()+1, 0).getDate()) {
         //  else if last day and month: first prayer = prev days isha & last prayer = next years first fajr
-        if (currentDate.getMonth === 11) {
+        if (currentDate.getMonth() === 11) {
             firstPrayer = yearData[currentDate.getMonth()][currentDate.getDate()-2][4]
             // lastPrayer = state.salah.apiData.nextYear[0][0][0]
+            console.log("Last day and last month");
         } else { //  else if last day of month: first prayer = prev days isha & last prayer = next month's first fajr
             firstPrayer = yearData[currentDate.getMonth()][currentDate.getDate()-2][4]
             lastPrayer = yearData[currentDate.getMonth()+1][0][0]
+            console.log("Last Day of month");
         } 
     }
     
     else { // first prayer = prev days isha & last prayer = next day's fajr
         firstPrayer = yearData[currentDate.getMonth()][currentDate.getDate()-2][4]
         lastPrayer = yearData[currentDate.getMonth()][currentDate.getDate()][0]
+        console.log("Day and Month not last or first");
     }
 
     currentDayPrayerData = [firstPrayer, ...currentDayPrayerData, lastPrayer]
     console.log(JSON.stringify(currentDayPrayerData));
+    const waqts = ["PrevIsha", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha", "NextFajr"]
+    waqts.map((waqt, index) => {
+        currentDayPrayerDataArray[waqt] = currentDayPrayerData[index]
+	})
+    console.log(JSON.stringify(currentDayPrayerDataArray));
+
 }
 // This is to mimic the api data (for testing)
 processDate(testData)

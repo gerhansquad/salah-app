@@ -1,12 +1,11 @@
 import { promiseHandler, getFileEntry, getFileContent, writeToFile } from "../utils/utility"
 import State from "./SalahData"
 
-// let startupMonth = new Date().getMonth() + 1
-// let system_month = startupMonth
+let startupYear = new Date().getFullYear()
 
 let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-let salahFileData, system_timezone
+let salahFileData = null
 
 export default async function loadPrayerData() {
 
@@ -27,7 +26,7 @@ export default async function loadPrayerData() {
 		state.salah = salahFileData
 	}
 	
-	console.log("SALAH API FILE DATA: " + JSON.stringify(api_data, null, 4))
+	console.log("SALAH FILE DATA: " + JSON.stringify(salahFileData, null, 4))
 
 	console.log("STATE OBJ : " + JSON.stringify(state.salah, null, 4))
 
@@ -36,17 +35,12 @@ export default async function loadPrayerData() {
 	 * If it has, update files and state once again.
 	 */
 	;(async function updateAgain() {
-		// system_month = new Date().getMonth() + 1
-		system_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-		// console.log("API MONTH IS : " + api_data[0].date.gregorian.month.number)
+		system_year = new Date().getFullYear()
 		if (
-			// system_month != startupMonth || // is the current system month different from when the app booted up?
-			// api_data[0].date.gregorian.month.number != system_month || // is the current system month different from the one in the API
-			system_timezone != startupTimezone || // is the current timezone different from when the app booted up?
-			system_timezone != api_data[0].meta.timezone // is the current timezone different from the one stored on disk?
+			system_year != startupYear // is the current system year different from when the app booted up?
 		) {
-			console.log("month/timezone change detected\n")
-			await updateFilesAndState(salahFileEntry, state, true)
+			console.log("year change detected\n")
+			await updateFilesAndState(salahFileEntry, state, false)
 			// here the call to refresh view will be invoked.
 		} else {
 			console.log("NO FILES UPDATED")
@@ -92,7 +86,9 @@ async function updateFilesAndState(fileEntry, state, dualCall) {
 	})() : (() => {
 		// delete state.salah.apiData[0]
 		// api_data = [...(state.salah.apiData), await getApiData(state, currentYear+2)]
-		apiData1 = await getApiData(state, currentYear+2)
+		state.salah.apiData.currentYear = state.salah.apiData.nextYear
+		state.salah.apiData.lastPrayerTimestamp = state.salah.apiData.currentYear
+		apiData1 = await getApiData(state, currentYear+1)
 		state.salah.apiData.nextYear = processData(apiData1)
 	})()
 	// const api_data = JSON.parse(await getApiData(state, dualCall)).data

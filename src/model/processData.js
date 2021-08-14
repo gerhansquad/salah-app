@@ -5,6 +5,7 @@ function processData(data, state) {
     const apiYear = parseInt(data[1][0].date.gregorian.year);
     const currentYear = new Date().getFullYear()
     currentYear === apiYear && (() => {state.salah.apiData.timeZone = data[1][0].meta.timezone; state.salah.apiData.apiYear = apiYear;})()
+    currentYear === apiYear
     for (const month in data) {
         const monthData = data[month].map((time, dayNo) => {
             let times = time.timings // {"Fajr":"06:04 (PST)","Sunrise":"07:22 (PST)","Dhuhr":"12:10 (PST)",...}

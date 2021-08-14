@@ -1,41 +1,30 @@
-import processDate from "../model/processData"
+import processTodayDate from "../view/prcoessTodayDate"
 
 export default function updateView(state) {
 	let startUpDate = new Date()
-	let currentDayPrayerDataArray = null
-	let currentDayPrayerData = {}
-
-	const waqts = ["PrevIsha", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha", "NextFajr"]
-
-	function getNewDayData(time) {
-		waqts.map((waqt, index) => {
-			let timestamp = currentDayPrayerDataArray[index]
-			currentDayPrayerData[waqt] = timestamp
-		})
-	}
-
+	let currentDayPrayerData = null
 	;(function updateTime() {
 		let nIndex = null
 		let pIndex = null
 		const currentTime = new Date()
 		if (
-			currentDayPrayerDataArray === null || // app first boots up
+			currentDayPrayerData === null || // app first boots up
 			currentTime.getDate() != startUpDate.getDate() // its a new day
 		) {
 			startUpDate = currentTime
-			getNewDayData(currentTime)
+			currentDayPrayerData = processTodayDate(state, currentTime)
 		}
 
-		for (let index = 0; index < currentDayPrayerDataArray.length; index++) {
-			if (currentTime < currentDayPrayerDataArray[index]) {
+		for (let index = 0; index < currentDayPrayerData.length; index++) {
+			if (currentTime < currentDayPrayerData[index]) {
 				nIndex = index
 				pIndex = index - 1
 				break
 			}
 		}
 
-		const nextPrayerTimestamp = currentDayPrayerDataArray[nIndex]
-		const prevPrayerTimestamp = currentDayPrayerDataArray[pIndex]
+		const nextPrayerTimestamp = currentDayPrayerData[nIndex]
+		const prevPrayerTimestamp = currentDayPrayerData[pIndex]
 
 		const last_prayer = waqts[pIndex] == "PrevIsha" ? "Isha" : waqts[pIndex]
 		const next_prayer = waqts[nIndex] == "NextFajr" ? "Fajr" : waqts[nIndex]
