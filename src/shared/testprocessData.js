@@ -43,8 +43,8 @@ function processDate(data) {
         })
         yearData.push(monthData) 
     }
-    let currentDate = new Date(2021, 11, 2)
-    // let currentDate = new Date()
+    // let currentDate = new Date(2021, 11, 2)
+    let currentDate = new Date()
     let firstPrayer
     let lastPrayer
     let currentDayPrayerData = []
