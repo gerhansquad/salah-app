@@ -202,7 +202,7 @@ function calcTimes(method) {
 
 	
 	// set calculation method 
-	setMethod: function setMethod(method) {
+	setMethod: function(method) {
 		if (methods[method]) {
 			this.adjust(methods[method].params);
 			calcMethod = method;
