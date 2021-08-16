@@ -60,14 +60,13 @@ http://praytimes.org/calculation
 //----------------------- PrayTimes Class ------------------------
 
 
-function PrayTimes(method) {
+function calcTimes(method) {
 
 
 	//------------------------ Constants --------------------------
-	let
 	
 	// Time Names
-	timeNames = {
+	let timeNames = {
 		imsak    : 'Imsak',
 		fajr     : 'Fajr',
 		sunrise  : 'Sunrise',
@@ -77,11 +76,11 @@ function PrayTimes(method) {
 		maghrib  : 'Maghrib',
 		isha     : 'Isha',
 		midnight : 'Midnight'
-	},
+	}
 
 
 	// Calculation Methods
-	methods = {
+	let methods = {
 		MWL: {
 			name: 'Muslim World League',
 			params: { fajr: 18, isha: 17 } },
@@ -103,14 +102,14 @@ function PrayTimes(method) {
 		Jafari: {
 			name: 'Shia Ithna-Ashari, Leva Institute, Qum',
 			params: { fajr: 16, isha: 14, maghrib: 4, midnight: 'Jafari' } }
-	},
+	}
 
 
 	// Default Parameters in Calculation Methods
-	defaultParams = {
+	let defaultParams = {
 		maghrib: '0 min', midnight: 'Standard'
 
-	},
+	}
  
  
 	//----------------------- Parameter Values ----------------------
@@ -151,28 +150,27 @@ function PrayTimes(method) {
 
 	//---------------------- Default Settings --------------------
 	
-	calcMethod = 'MWL',
+	let calcMethod = 'MWL'
 
 	// do not change anything here; use adjust method instead
-	setting = {  
+	let setting = {  
 		imsak    : '10 min',
 		dhuhr    : '0 min',  
 		asr      : 'Standard',
 		highLats : 'NightMiddle'
-	},
+	}
 
-	timeFormat = '24h',
-	timeSuffixes = ['am', 'pm'],
-	invalidTime =  '-----',
+	let timeFormat = '24h'
+	let timeSuffixes = ['am', 'pm']
+	let invalidTime =  '-----'
 
-	numIterations = 1,
-	offset = {},
+	let numIterations = 1
+	let offset = {}
 
 
-	//----------------------- Local letiables ---------------------
+	//----------------------- Local Variables ---------------------
 
-	lat, lng, elv,       // coordinates
-	timeZone, jDate;     // time letiables
+	let lat, lng, elv, timeZone, jDate
 	
 
 	//---------------------- Initialization -----------------------
@@ -204,7 +202,7 @@ function PrayTimes(method) {
 
 	
 	// set calculation method 
-	setMethod: function(method) {
+	setMethod: function setMethod(method) {
 		if (methods[method]) {
 			this.adjust(methods[method].params);
 			calcMethod = method;
@@ -573,7 +571,7 @@ let DMath = {
 //---------------------- Init Object -----------------------
 
 
-let prayTimes = new PrayTimes();
+let prayTimes = new calcTimes();
 prayTimes.setMethod('MWL');
-console.log(prayTimes.getTimes(new Date(), [12.971599, 77.594566]))
+console.log(prayTimes.getTimes(new Date(2021, 0, 1), [12.971599, 77.594566], 'auto', 'auto', '12h')); 
 
