@@ -1,6 +1,6 @@
 # Salah
 
-Track your prayers with Salah!
+Pray on time with Salah!
 
 ### For contributors
 
