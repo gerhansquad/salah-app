@@ -8,7 +8,6 @@ let startupTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 let salahFileData = null
 
 export default async function loadPrayerData() {
-
 	const state = new State()
 	let salahFileEntry = await getFileEntry()
 	console.log("FILE ENTRY RECEIVED: " + JSON.stringify(salahFileEntry, null, 4))
@@ -76,14 +75,14 @@ async function updateFilesAndState(fileEntry, state, dualCall) {
 	 *  previshaa delete
 	 */
 	const currentYear = new Date().getFullYear()
-	const apiData1, apiData2 
-	dualCall ? (() => {
+	let apiData1, apiData2
+	dualCall ? (async() => {
 		apiData1 = getApiData(state, currentYear)
 		apiData2 = getApiData(state, currentYear+1)
-		const api_data = await Promise.all([apiData1,apiData2])
+		let api_data = await Promise.all([apiData1,apiData2])
 		state.salah.apiData.currentYear = processData(api_data[0])
 		state.salah.apiData.nextYear = processData(api_data[1])
-	})() : (() => {
+	})() : (async() => {
 		// delete state.salah.apiData[0]
 		// api_data = [...(state.salah.apiData), await getApiData(state, currentYear+2)]
 		state.salah.apiData.currentYear = state.salah.apiData.nextYear

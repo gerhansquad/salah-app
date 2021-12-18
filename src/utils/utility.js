@@ -19,7 +19,7 @@ function makeTimestamp(time, yearNo, monthNo, dayNo) {
 	return date
 }
 
-async function promiseHandler(promise, ...args) {
+async function promiseHandler(promise, ...args) {   
 	try {
 		const data = await promise(...args)
 		return [data, null]
@@ -63,9 +63,8 @@ async function getFileEntry() {
 
 async function getFileContent(fileEntry) {
 	console.log("FILE GOING TO BE READ: " + JSON.stringify(fileEntry, null, 4))
-
 	const [data, error] = await promiseHandler(getFileDataPromise)
-	error ? console.error("ERROR WHILE READING FILE: ", error) : null
+	error && console.error("ERROR WHILE READING FILE: ", error)
 	return data
 
 	function getFileDataPromise(...args) {
