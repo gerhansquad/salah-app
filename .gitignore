@@ -22,3 +22,6 @@ www/js/
 
 #Jest
 tests/
+
+#old frontend
+old-frontend/
