@@ -1,6 +1,4 @@
-export {promiseHandler, makeTimestamp, getFileEntry, getFileContent, writeToFile}
-
-
+export { getKeyByValue, promiseHandler, makeTimestamp, getFileEntry, getFileContent, writeToFile }
 
 function getKeyByValue(object, value) {
 	return Object.keys(object).find((key) => object[key] == value)
@@ -8,9 +6,9 @@ function getKeyByValue(object, value) {
 
 function makeTimestamp(time, yearNo, monthNo, dayNo) {
 	let date = new Date()
-    date.setFullYear(yearNo)
-    date.setDate(dayNo)
-    date.setMonth(parseInt(monthNo)-1)
+	date.setFullYear(yearNo)
+	date.setDate(dayNo)
+	date.setMonth(parseInt(monthNo) - 1)
 	let hour = time.split(":")[0]
 	hour = hour == 0 ? 24 : hour
 	date.setHours(hour)
@@ -19,7 +17,7 @@ function makeTimestamp(time, yearNo, monthNo, dayNo) {
 	return date
 }
 
-async function promiseHandler(promise, ...args) {   
+async function promiseHandler(promise, ...args) {
 	try {
 		const data = await promise(...args)
 		return [data, null]
@@ -35,7 +33,7 @@ async function getFileEntry() {
 	error ? console.error("ERROR WHILE GETTING FILE ENTRIES: ", error) : null
 	return FileEntry
 
-	function getFilePromise(...args) {
+	function getFilePromise() {
 		return new Promise((res, rej) => {
 			window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, getFsSuccessHandler, getFsErrorHandler)
 
