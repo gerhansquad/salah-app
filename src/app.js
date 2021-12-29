@@ -188,6 +188,14 @@ function PrayerTimeCalculator(method) {
 
 	//----------------------- Public Functions ------------------------
 	return {
+		getCalcMethod: function () {
+			return calcMethod
+		},
+
+		getTimeFormat: function () {
+			return timeFormat
+		},
+
 		// set calculation method
 		setMethod: function (method) {
 			if (methods[method]) {
@@ -543,28 +551,43 @@ let DMath = {
 	},
 }
 
+const calculator = new PrayerTimeCalculator()
+
 // init current date & timezone
-let calculator = new PrayerTimeCalculator()
+// these change if it is a new day or device is in a different timezone
 let currentDate = new Date()
 let currentTimeZone = calculator.getTimeZone(currentDate)
 
-let prayerTimes = null
+// model for the app to be used by frontend
+let appdata = {
+	coords: getCoords(),
+	prayerTimes: {},
+	settings: {
+		timeFormat: calculator.getTimeFormat(),
+		method: calculator.getCalcMethod(),
+		notifToggle: true,
+	},
+}
 
 // splash screen showing before the device is ready
 document.addEventListener(
 	"deviceready",
 	function () {
 		// calculate prayer times
-		const coords = getCoords()
-		prayerTimes = calculator.getTimes(currentDate, coords, "auto", "auto", "12h")
-		// asynchronously populate main app with data before unhiding the splash screen
-		populateView() // async function
+		appdata.prayerTimes = calculator.getTimes(currentDate, appdata.coords, "auto", "auto", appdata.settings.timeFormat)
+
+		// populate main app with data before unhiding the splash screen
+		populateView()
+
 		// asynchronously start checking if its a new day or timezone:
-		newDayOrTimezoneHandler() // async function
+		initNewDayOrTimezoneHandler() // async function
+
 		// hide splash screen
 	},
 	false
 )
+
+// returns [lats, longs]
 function getCoords() {
 	let coords = []
 	navigator.geolocation.getCurrentPosition(
@@ -583,8 +606,14 @@ function getCoords() {
 	return coords
 }
 
-async function newDayOrTimezoneHandler() {
-	const id = setInterval(() => {
+async function initNewDayOrTimezoneHandler() {
+	// recalculate prayer times
+	const recalculate = (date) => {
+		appdata.prayerTimes = calculator.getTimes(date, appdata.coords, "auto", "auto", appdata.settings.timeFormat)
+	}
+
+	// every second, recalculate prayer times if it is a new day or timezone
+	const handlerID = setInterval(() => {
 		const date = new Date()
 		const timezone = calculator.getTimeZone(date)
 		// if its new day:
@@ -598,10 +627,10 @@ async function newDayOrTimezoneHandler() {
 		if (timezone != currentTimeZone) {
 			// update current timezone
 			currentTimeZone = timezone
+			// update coordinates
+			appdata.coords = getCoords()
 			// recalculate prayer times
 			recalculate(date)
 		}
-	}, 1000);
-	const recalculate = (date) => (prayerTimes = calculator.getTimes(date, coords, "auto", "auto", "12h"))
-	return id
+	}, 1000)
 }
