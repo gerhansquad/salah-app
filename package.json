@@ -5,6 +5,7 @@
 	"description": "A muslim prayer reminder app",
 	"main": "app.js",
 	"scripts": {
+		"sync": "npm i && cordova prepare",
 		"build": "webpack --config webpack.config.js",
 		"emulate": "npm run build && cordova emulate android",
 		"device": "npm run build && cordova run android --device"
