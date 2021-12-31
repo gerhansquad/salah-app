@@ -56,10 +56,8 @@ http://praytimes.org/calculation
 */
 
 import { DMath } from "./utils/geo.js"
-export default new PrayTimes()
 
-//----------------------- PrayTimes Class ------------------------
-function PrayTimes(method) {
+export default new (function (method) {
 	//------------------------ Constants --------------------------
 
 	// Time Names
@@ -501,4 +499,4 @@ function PrayTimes(method) {
 			return num < 10 ? "0" + num : num
 		},
 	}
-}
+})()
