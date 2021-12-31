@@ -6,24 +6,13 @@ Pray on time with Salah!
 
 **Required**
 
-`npm i`
-Run this once at the beginning to install required dependancies
+`npm run sync`
+Run this once at the beginning to install required dependancies. **Important: You need to have the Android/iOS SDK installed beforehand.**
 
-`npm i cordova -g`
-If you don't already have Cordova, run this command once at the beginning to install it globally
-
-`cordova platform add android`
-Run this once at the beginning to install the development tools for Android
-development. **Important: You need to have the Android SDK installed beforehand.**
-
-`cordova platform add ios`
-Run this once at the beginning to install the development tools for iOS
-development. **Important: You need to have the iOS SDK installed beforehand, which is currently only possible on macOS.**
-
-**To run the application**
+**To run the Android application**
 
 `npm run emulate`
-Run this to rebundle the projct, as well as rebuild and redeploy the Android app on a running emulator.
+Run this to bundle and build the project, as well as deploy the Android app on a running emulator.
 
 `npm run device`
-Run this to rebundle the projct, as well as rebuild and redeploy the Android app on a connected Android device.
+Run this to bundle and build the project, as well as deploy the Android app on a connected Android device.

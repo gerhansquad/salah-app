@@ -5,6 +5,7 @@
 	"description": "A muslim prayer reminder app",
 	"main": "app.js",
 	"scripts": {
+		"sync": "npm i && cordova prepare",
 		"build": "webpack --config webpack.config.js",
 		"emulate": "npm run build && cordova emulate android",
 		"device": "npm run build && cordova run android --device"
@@ -18,10 +19,8 @@
 		"cordova-android": "^9.0.0",
 		"cordova-browser": "^6.0.0",
 		"cordova-ios": "^6.1.1",
-		"cordova-plugin-add-swift-support": "^2.0.2",
-		"cordova-plugin-file": "^6.0.2",
+		"cordova-plugin-dialogs": "^2.0.2",
 		"cordova-plugin-geolocation": "^4.1.0",
-		"cordova-plugin-splashscreen": "^6.0.0",
 		"webpack": "^5.11.0",
 		"webpack-cli": "^4.3.0"
 	},
@@ -29,7 +28,8 @@
 		"plugins": {
 			"cordova-plugin-geolocation": {
 				"GPS_REQUIRED": "true"
-			}
+			},
+			"cordova-plugin-dialogs": {}
 		},
 		"platforms": [
 			"android",
@@ -38,6 +38,8 @@
 		]
 	},
 	"dependencies": {
+		"cordova": "^11.0.0",
+		"cordova-import-npm": "^1.0.33",
 		"swiper": "^7.0.1"
 	}
 }
