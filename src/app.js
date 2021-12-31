@@ -1,5 +1,4 @@
 import { getCoords, getArrayedDate } from "./utils/geo"
-import { renderEvent } from "./utils/event"
 import prayerConfig from "./prayer-config"
 import AppData from "./model/app-settings"
 import updateView, { hideSplashScreen } from "./view/updateView"
@@ -9,8 +8,6 @@ import updateView, { hideSplashScreen } from "./view/updateView"
 let currentDate = getArrayedDate(new Date())
 let currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-renderEvent.addEventListener("render-new-data", async () => await updateView())
-
 // splash screen showing before the device is ready
 document.addEventListener(
 	"deviceready",
@@ -19,7 +16,7 @@ document.addEventListener(
 		calculateTimes(currentDate)
 
 		// populate main app with data before unhiding the splash screen
-		render()
+		await updateView()
 
 		// asynchronously start checking if its a new day or timezone:
 		initNewDayOrTimezoneHandler()
@@ -54,10 +51,6 @@ function initNewDayOrTimezoneHandler() {
 			render()
 		}
 	}, 1000)
-}
-
-async function render() {
-	renderEvent.dispatchEvent(renderEvent.event)
 }
 
 // calculate prayer times
