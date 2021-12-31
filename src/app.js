@@ -38,7 +38,7 @@ function initNewDayOrTimezoneHandler() {
 			currentDate = date
 			// recalculate prayer times
 			calculateTimes(date)
-			render()
+			updateView()
 		}
 		// if its new timezone:
 		if (timezone != currentTimeZone) {
@@ -48,7 +48,7 @@ function initNewDayOrTimezoneHandler() {
 			AppData.coords = getCoords()
 			// recalculate prayer times
 			calculateTimes(date)
-			render()
+			updateView()
 		}
 	}, 1000)
 }
