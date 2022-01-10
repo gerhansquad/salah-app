@@ -11,7 +11,7 @@ let currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 // splash screen showing before the device is ready
 document.addEventListener(
 	"deviceready",
-	function () {
+	async function () {
 		// calculate prayer times
 		calculateTimes(currentDate)
 
