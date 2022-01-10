@@ -1,5 +1,5 @@
 import prayerConfig from "../prayer-config"
-import { getCoords } from "../utils/general"
+import { getCoords } from "../utils/geo"
 // model for the app to be used by frontend
 export default {
 	coords: getCoords(),
